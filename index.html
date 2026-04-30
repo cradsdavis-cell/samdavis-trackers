@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>Trackers — Sam Davis</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,700;0,800;1,700;1,800&display=swap');
+
+  :root {
+    --bg: #FAF7EE; --bg-card: #DCE0B6; --ink: #3E3418; --ink-soft: #6B5F3A;
+    --ink-faint: #998D6B; --accent: #8F7530; --rule: #B0B490;
+    --good: #7A8B3F; --warn: #C68A2E; --bad: #A85A3F; --neutral: #998D6B;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    --serif: "Playfair Display", Georgia, serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--bg); color: var(--ink); font-family: var(--sans); font-size: 18px; line-height: 1.55; -webkit-font-smoothing: antialiased; min-height: 100vh; }
+  main { max-width: 1100px; margin: 0 auto; padding: 80px 32px 60px; }
+  .eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--accent); font-weight: 600; margin-bottom: 14px; }
+  h1 { font-family: var(--serif); font-size: clamp(40px, 6vw, 64px); line-height: 1.04; letter-spacing: -0.015em; font-weight: 800; margin-bottom: 20px; max-width: 900px; }
+  h1 em { color: var(--accent); font-style: italic; font-weight: 700; }
+  .lede { font-size: clamp(17px, 1.5vw, 21px); color: var(--ink-soft); line-height: 1.5; max-width: 720px; margin-bottom: 48px; }
+  .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 64px; }
+  a.card { display: block; background: var(--bg-card); border: 1px solid var(--rule); border-radius: 10px; padding: 28px 28px 24px; text-decoration: none; color: var(--ink); transition: transform 0.2s ease, box-shadow 0.2s ease; }
+  a.card:hover { transform: translateY(-3px); box-shadow: 0 10px 32px rgba(62, 52, 24, 0.1); }
+  a.card .tag { font-family: var(--mono); font-size: 11px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); font-weight: 600; margin-bottom: 12px; }
+  a.card h2 { font-family: var(--serif); font-size: clamp(22px, 2vw, 28px); font-weight: 800; line-height: 1.15; letter-spacing: -0.01em; color: var(--ink); margin-bottom: 14px; }
+  a.card p { font-size: 14.5px; color: var(--ink-soft); line-height: 1.55; margin-bottom: 18px; }
+  a.card .meta { display: flex; align-items: center; justify-content: space-between; font-family: var(--mono); font-size: 12px; padding-top: 14px; border-top: 1px solid rgba(62, 52, 24, 0.12); }
+  .pill { display: inline-block; padding: 3px 10px; border-radius: 999px; font-weight: 700; letter-spacing: 0.06em; color: #fff; font-size: 11px; }
+  .pill.good { background: var(--good); }
+  .pill.warn { background: var(--warn); }
+  .pill.bad { background: var(--bad); }
+  .pill.neutral { background: var(--neutral); }
+  .updated { color: var(--ink-faint); }
+  .footer { padding-top: 36px; border-top: 1px solid var(--rule); font-family: var(--mono); font-size: 13.5px; color: var(--ink-faint); }
+  .footer a { color: var(--ink); text-decoration: none; border-bottom: 1px dashed var(--ink-faint); }
+  .footer a:hover { border-bottom-color: var(--accent); }
+  @media (max-width: 760px) { main { padding: 48px 24px 48px; } .cards { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+  <main>
+    <div class="eyebrow">Sam Davis · Trackers</div>
+    <h1>Live <em>progress trackers.</em></h1>
+    <p class="lede">Personal dashboards that auto-refresh from the second-brain skills. Not for public indexing — just the bird's-eye views I use myself.</p>
+
+    <div class="cards">
+      <a class="card" href="sf-trip/">
+        <div class="tag">SF Trip 2026-05</div>
+        <h2>Outreach + events.</h2>
+        <p>Conditional San Francisco trip 15–29 May. Pre-work block runs to GO/NO-GO on May 12. Tracks tier-A through tier-D outreach, networking events, and trigger-criteria progress.</p>
+        <div class="meta">
+          <span class="pill warn">HOLD</span>
+          <span class="updated">Updated today</span>
+        </div>
+      </a>
+      <a class="card" href="productivity/">
+        <div class="tag">Productivity</div>
+        <h2>Today + 30-day.</h2>
+        <p>Daily verdict (P1/P2/P3 hit/partial/miss/drift), green-day streak, 30-day priority strips, and volume sparkline. Refreshed by /end-day each evening.</p>
+        <div class="meta">
+          <span class="pill warn">AMBER</span>
+          <span class="updated">Updated today</span>
+        </div>
+      </a>
+    </div>
+
+    <div class="footer">
+      Source-of-truth: skills write to <code>EA/demos/*.html</code>. This site mirrors that.<br>
+      Noindexed. <a href="https://cradsdavis-cell.github.io/samdavis-site/">Public site →</a>
+    </div>
+  </main>
+</body>
+</html>
