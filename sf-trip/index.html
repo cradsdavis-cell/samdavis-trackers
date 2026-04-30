@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>SF Trip 2026 — Tracker</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="description" content="SF Trip 2026 personal tracker — not for public indexing.">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;0,800;1,700;1,800&display=swap');
+
+  :root {
+    --bg: #FAF7EE;
+    --bg-soft: #F2EEDD;
+    --bg-card: #DCE0B6;
+    --bg-card-hi: #C8CEA0;
+    --bg-card-soft: #E8E8C8;
+    --ink: #3E3418;
+    --ink-soft: #6B5F3A;
+    --ink-faint: #998D6B;
+    --accent: #8F7530;
+    --accent-bright: #B89B4A;
+    --accent-deep: #6B5624;
+    --rule: #B0B490;
+    --good: #7A8B3F;
+    --bad: #A85A3F;
+    --warn: #C68A2E;
+    --neutral: #998D6B;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+    --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    --serif: "Playfair Display", Georgia, "Times New Roman", serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.5;
+  }
+
+  a { color: var(--accent); text-decoration: underline; text-decoration-color: rgba(143, 117, 48, 0.35); }
+  a:hover { text-decoration-color: var(--accent); }
+
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 32px 32px 60px;
+  }
+  @media (max-width: 720px) { .container { padding: 24px 18px 50px; } }
+
+  /* HEADER */
+  header.top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 28px;
+    gap: 16px;
+  }
+  header.top .ident { font-size: 13px; color: var(--ink-soft); padding-top: 4px; }
+  header.top .ident b { font-weight: 700; color: var(--ink); }
+  header.top .meta {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    color: var(--ink-faint);
+    text-align: right;
+    letter-spacing: 0.05em;
+    line-height: 1.7;
+  }
+  header.top .meta b { color: var(--ink); font-weight: 700; }
+
+  /* HERO */
+  .hero {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 14px;
+  }
+  h1 {
+    font-family: var(--serif);
+    font-size: 64px;
+    line-height: 1.0;
+    letter-spacing: -0.02em;
+    font-weight: 800;
+    color: var(--ink);
+    margin-bottom: 18px;
+  }
+  @media (max-width: 720px) { h1 { font-size: 44px; } }
+  h1 .accent { color: var(--accent); font-style: italic; font-weight: 700; }
+  .lede {
+    font-size: 15.5px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+    max-width: 740px;
+    margin: 0 auto;
+  }
+
+  /* SECTION */
+  section { margin-bottom: 48px; }
+  h2.sec {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 14px;
+  }
+  h3 {
+    font-family: var(--serif);
+    font-size: 22px;
+    line-height: 1.15;
+    letter-spacing: -0.015em;
+    font-weight: 800;
+    color: var(--ink);
+  }
+
+  /* PILLS */
+  .pill {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 9.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    padding: 3px 8px;
+    border-radius: 3px;
+    border: 1px solid;
+    white-space: nowrap;
+  }
+  .pill-green { background: rgba(122, 139, 63, 0.20); color: #4F5C28; border-color: rgba(122, 139, 63, 0.55); }
+  .pill-amber { background: rgba(198, 138, 46, 0.20); color: #7A5418; border-color: rgba(198, 138, 46, 0.55); }
+  .pill-red   { background: rgba(168, 90, 63, 0.20);  color: #6B3A28; border-color: rgba(168, 90, 63, 0.55); }
+  .pill-grey  { background: rgba(153, 141, 107, 0.18); color: var(--ink-faint); border-color: rgba(153, 141, 107, 0.45); }
+
+  /* VERDICT */
+  .verdict {
+    background: linear-gradient(135deg, var(--accent-bright) 0%, var(--accent) 100%);
+    border: 1px solid var(--accent-deep);
+    border-radius: 10px;
+    padding: 24px 28px;
+    color: var(--ink);
+    margin-bottom: 36px;
+  }
+  .verdict-head {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 32px;
+    align-items: center;
+    margin-bottom: 22px;
+  }
+  @media (max-width: 720px) { .verdict-head { grid-template-columns: 1fr; gap: 16px; } }
+  .verdict-stat { display: flex; flex-direction: column; }
+  .verdict-stat .label {
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    font-weight: 600;
+    color: var(--accent-deep);
+    margin-bottom: 4px;
+  }
+  .verdict-state {
+    font-family: var(--serif);
+    font-size: 60px;
+    font-weight: 800;
+    line-height: 1;
+    color: var(--ink);
+  }
+  @media (max-width: 720px) { .verdict-state { font-size: 48px; } }
+  .verdict-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 14px;
+    color: var(--ink);
+    line-height: 1.45;
+  }
+  .verdict-summary b { font-weight: 700; }
+
+  .trigger-list {
+    list-style: none;
+    background: rgba(250, 247, 238, 0.65);
+    border-radius: 6px;
+    border: 1px solid var(--accent-deep);
+    overflow: hidden;
+  }
+  .trigger-list li {
+    display: grid;
+    grid-template-columns: 32px 1fr auto;
+    gap: 12px;
+    align-items: center;
+    padding: 10px 14px;
+    border-bottom: 1px solid rgba(107, 86, 36, 0.22);
+    font-size: 13.5px;
+    color: var(--ink);
+    line-height: 1.4;
+  }
+  .trigger-list li:last-child { border-bottom: none; }
+  .trigger-list .num {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--accent-deep);
+  }
+
+  /* PRE-WORK */
+  .prework-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+  }
+  @media (max-width: 880px) { .prework-grid { grid-template-columns: 1fr; } }
+  .prework-panel {
+    background: var(--bg-card);
+    border: 1px solid var(--rule);
+    border-top: 3px solid var(--accent);
+    border-radius: 6px;
+    padding: 18px 20px;
+  }
+  .prework-eyebrow {
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--accent);
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .prework-panel h3 { font-size: 22px; margin-bottom: 14px; }
+  .progress {
+    width: 100%;
+    height: 14px;
+    background: var(--bg-soft);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 10px;
+  }
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent-deep), var(--accent-bright));
+    transition: width 250ms;
+  }
+  .progress-segments { display: flex; height: 100%; width: 100%; }
+  .progress-seg { height: 100%; transition: width 250ms; }
+  .progress-seg.seg-a { background: var(--accent-deep); }
+  .progress-seg.seg-b { background: var(--accent); }
+  .progress-seg.seg-c { background: var(--accent-bright); }
+  .progress-seg.seg-d { background: #D4B772; }
+  .progress-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--mono);
+    font-size: 10.5px;
+    color: var(--ink-soft);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .progress-meta b { color: var(--ink); font-weight: 700; }
+
+  /* KPI TILES */
+  .kpi-row { display: grid; gap: 12px; }
+  .kpi-row.cols-6 { grid-template-columns: repeat(6, 1fr); }
+  .kpi-row.cols-4 { grid-template-columns: repeat(4, 1fr); }
+  @media (max-width: 880px) {
+    .kpi-row.cols-6 { grid-template-columns: repeat(3, 1fr); }
+    .kpi-row.cols-4 { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 480px) {
+    .kpi-row.cols-6 { grid-template-columns: repeat(2, 1fr); }
+  }
+  .kpi-tile {
+    background: var(--bg-card);
+    border: 1px solid var(--rule);
+    border-top: 3px solid var(--accent);
+    border-radius: 6px;
+    padding: 14px 16px 16px;
+  }
+  .kpi-tile.highlight {
+    border-top-color: var(--good);
+    background: rgba(122, 139, 63, 0.14);
+  }
+  .kpi-tile .label {
+    font-family: var(--mono);
+    font-size: 9.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--accent);
+    font-weight: 700;
+    margin-bottom: 8px;
+    line-height: 1.3;
+  }
+  .kpi-tile.highlight .label { color: var(--good); }
+  .kpi-tile .num {
+    font-family: var(--serif);
+    font-size: 36px;
+    line-height: 1;
+    font-weight: 800;
+    color: var(--ink);
+  }
+  .kpi-tile .total {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink-faint);
+    margin-left: 4px;
+    font-weight: 600;
+  }
+
+  /* TIER BREAKDOWN */
+  .tier-list { display: flex; flex-direction: column; gap: 8px; }
+  .tier-row {
+    display: grid;
+    grid-template-columns: 130px 1fr 80px;
+    gap: 14px;
+    align-items: center;
+    padding: 9px 14px;
+    background: var(--bg-soft);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+  }
+  @media (max-width: 720px) {
+    .tier-row { grid-template-columns: 100px 1fr 70px; gap: 10px; padding: 9px 10px; }
+  }
+  .tier-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--accent-deep);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .tier-bar {
+    height: 12px;
+    background: var(--bg);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .tier-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent-bright));
+    transition: width 250ms;
+  }
+  .tier-meta {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-soft);
+    text-align: right;
+  }
+  .tier-meta b { color: var(--ink); font-weight: 700; }
+
+  /* LOGISTICS */
+  .logistics-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  @media (max-width: 880px) { .logistics-grid { grid-template-columns: 1fr; } }
+  .logistics-group {
+    background: var(--bg-soft);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 16px 18px;
+  }
+  .logistics-group h4 {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--accent);
+    font-weight: 700;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--rule);
+  }
+  .logistics-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .logistics-item {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 10px;
+    align-items: start;
+  }
+  .logistics-label-block { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+  .logistics-label {
+    font-size: 13px;
+    color: var(--ink);
+    font-weight: 600;
+    line-height: 1.35;
+  }
+  .logistics-note {
+    font-size: 11.5px;
+    color: var(--ink-soft);
+    line-height: 1.4;
+  }
+
+  /* TRIGGER DETAIL */
+  .trigger-detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  @media (max-width: 880px) { .trigger-detail-grid { grid-template-columns: 1fr; } }
+  .trigger-card {
+    background: var(--bg-soft);
+    border: 1px solid var(--rule);
+    border-left: 4px solid var(--rule);
+    border-radius: 4px;
+    padding: 14px 16px;
+  }
+  .trigger-card.amber { border-left-color: var(--warn); }
+  .trigger-card.green { border-left-color: var(--good); }
+  .trigger-card.red   { border-left-color: var(--bad); }
+  .trigger-card.grey  { border-left-color: var(--neutral); }
+  .trigger-card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+  .trigger-card-title {
+    font-family: var(--serif);
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.25;
+  }
+  .trigger-card .note {
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    line-height: 1.55;
+  }
+  .trigger-card .note b { color: var(--ink); font-weight: 700; }
+
+  /* FOOTER */
+  footer.bottom {
+    margin-top: 56px;
+    padding-top: 18px;
+    border-top: 1px solid var(--rule);
+    font-family: var(--mono);
+    font-size: 10.5px;
+    color: var(--ink-faint);
+    letter-spacing: 0.05em;
+    line-height: 1.7;
+  }
+  footer.bottom .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-top: 10px;
+  }
+
+</style>
+</head>
+<body>
+<a href="../" style="position:fixed;top:14px;left:14px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;color:#6B5F3A;text-decoration:none;background:#F2EEDD;padding:6px 12px;border-radius:6px;border:1px solid #B0B490;z-index:1000;">&larr; Trackers hub</a>
+<div class="container">
+
+  <!-- HEADER -->
+  <header class="top">
+    <div class="ident"><b>SF Trip 2026</b> · personal tracker</div>
+    <div class="meta">
+      LAST UPDATED · <b><span class="last-updated">2026-04-29 10:00 PM AEST</span></b><br>
+      DECISION DAY · MAY 12 · <b><span class="days-to-decision">13</span> DAYS</b>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="eyebrow">Apr 28 → May 12 pre-work · May 15–29 trip window</div>
+    <h1>SF Trip <span class="accent">2026</span></h1>
+    <p class="lede">Conditional, not committed. The decision to fly is gated by 5 trigger conditions evaluated on May 12, downstream of three pre-work deadlines (May 5 · May 8 · May 10).</p>
+  </div>
+
+  <!-- VERDICT -->
+  <section class="verdict">
+    <div class="verdict-head">
+      <div class="verdict-stat">
+        <span class="label">Verdict</span>
+        <span class="verdict-state">HOLD</span>
+      </div>
+      <div class="verdict-summary">
+        <span><b><span class="triggers-green">0</span> of 5</b> triggers green</span>
+        <span><b><span class="days-to-decision-2">13</span> days</b> to May 12 decision</span>
+        <span><b><span class="days-to-trip">16</span> days</b> to earliest flight (May 15)</span>
+      </div>
+    </div>
+
+    <ul class="trigger-list">
+      <li class="trigger-row" id="trigger-1" data-state="grey">
+        <span class="num">01</span>
+        <span class="trigger-text">≥3 confirmed in-person SF conversations on calendar</span>
+        <span class="pill pill-grey">Not started</span>
+      </li>
+      <li class="trigger-row" id="trigger-2" data-state="amber">
+        <span class="num">02</span>
+        <span class="trigger-text">PhD signed off by Matt + Clara</span>
+        <span class="pill pill-amber">In progress</span>
+      </li>
+      <li class="trigger-row" id="trigger-3" data-state="amber">
+        <span class="num">03</span>
+        <span class="trigger-text">EF SF responded OR Day-21 nudge sent (May 11)</span>
+        <span class="pill pill-amber">In progress</span>
+      </li>
+      <li class="trigger-row" id="trigger-4" data-state="amber">
+        <span class="num">04</span>
+        <span class="trigger-text">Wave-1 UK ships submitted (Wellington May 3 · Winchester ×2 May 1 · Marlborough May 12)</span>
+        <span class="pill pill-amber">In progress</span>
+      </li>
+      <li class="trigger-row" id="trigger-5" data-state="amber">
+        <span class="num">05</span>
+        <span class="trigger-text">SEAF wages cleared + Diane sale resolved</span>
+        <span class="pill pill-amber">In progress</span>
+      </li>
+    </ul>
+  </section>
+
+  <!-- PRE-WORK COUNTDOWN -->
+  <section>
+    <h2 class="sec">Pre-work countdown</h2>
+    <div class="prework-grid">
+
+      <div class="prework-panel">
+        <div class="prework-eyebrow">May 5 · <span class="days-may5">6</span> days</div>
+        <h3>Outreach <span class="kpi-sent-mirror">9</span>/30</h3>
+        <div class="progress">
+          <div class="progress-segments">
+            <div class="progress-seg seg-a" style="width: 16.67%"></div>
+            <div class="progress-seg seg-b" style="width: 10%"></div>
+            <div class="progress-seg seg-c" style="width: 6.67%"></div>
+            <div class="progress-seg seg-d" style="width: 0%"></div>
+          </div>
+        </div>
+        <div class="progress-meta">
+          <span>Tier A · B · C · D</span>
+          <span class="prework-state-1"><b>Ahead · Day 2 · 10 of 30</b></span>
+        </div>
+      </div>
+
+      <div class="prework-panel">
+        <div class="prework-eyebrow">May 8 · <span class="days-may8">9</span> days</div>
+        <h3>Events <span class="kpi-events-id-mirror">7</span>/5</h3>
+        <div class="progress">
+          <div class="progress-fill events-progress-fill" style="width: 100%"></div>
+        </div>
+        <div class="progress-meta">
+          <span>identified · 1 missed (SF Climate Week)</span>
+          <span class="prework-state-2"><b>Target hit early</b></span>
+        </div>
+      </div>
+
+      <div class="prework-panel">
+        <div class="prework-eyebrow">May 10 · <span class="days-may10">11</span> days</div>
+        <h3>Accommodation <span class="kpi-accom-mirror">0</span>/3</h3>
+        <div class="progress">
+          <div class="progress-fill accom-progress-fill" style="width: 0%"></div>
+        </div>
+        <div class="progress-meta">
+          <span>shortlisted</span>
+          <span class="prework-state-3"><b>Not started</b></span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- OUTREACH KPIs -->
+  <section>
+    <h2 class="sec">Outreach KPIs</h2>
+    <div class="kpi-row cols-6">
+      <div class="kpi-tile">
+        <div class="label">Sent</div>
+        <div><span class="num kpi-sent">9</span><span class="total">/30</span></div>
+      </div>
+      <div class="kpi-tile">
+        <div class="label">Replied</div>
+        <div><span class="num kpi-replied">1</span></div>
+      </div>
+      <div class="kpi-tile highlight">
+        <div class="label">Meeting booked</div>
+        <div><span class="num kpi-meeting-booked">0</span><span class="total">/3</span></div>
+      </div>
+      <div class="kpi-tile">
+        <div class="label">Meeting done</div>
+        <div><span class="num kpi-meeting-done">0</span></div>
+      </div>
+      <div class="kpi-tile">
+        <div class="label">Silent &gt;5d</div>
+        <div><span class="num kpi-silent">0</span></div>
+      </div>
+      <div class="kpi-tile">
+        <div class="label">Dropped</div>
+        <div><span class="num kpi-dropped">0</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TIER BREAKDOWN -->
+  <section>
+    <h2 class="sec">Tier breakdown · sent vs target</h2>
+    <div class="tier-list">
+
+      <div class="tier-row">
+        <span class="tier-label">A · EF SF</span>
+        <div class="tier-bar"><div class="tier-fill tier-a-fill" style="width: 55.6%"></div></div>
+        <div class="tier-meta"><b><span class="tier-a-sent">5</span></b> / 9</div>
+      </div>
+
+      <div class="tier-row">
+        <span class="tier-label">B · Talent</span>
+        <div class="tier-bar"><div class="tier-fill tier-b-fill" style="width: 37.5%"></div></div>
+        <div class="tier-meta"><b><span class="tier-b-sent">3</span></b> / 8</div>
+      </div>
+
+      <div class="tier-row">
+        <span class="tier-label">C · Climate-VC</span>
+        <div class="tier-bar"><div class="tier-fill tier-c-fill" style="width: 22.2%"></div></div>
+        <div class="tier-meta"><b><span class="tier-c-sent">2</span></b> / 9</div>
+      </div>
+
+      <div class="tier-row">
+        <span class="tier-label">D · Warm intros</span>
+        <div class="tier-bar"><div class="tier-fill tier-d-fill" style="width: 0%"></div></div>
+        <div class="tier-meta"><b><span class="tier-d-sent">0</span></b> / 4</div>
+      </div>
+
+      <div class="tier-row">
+        <span class="tier-label">E · Lateral</span>
+        <div class="tier-bar"><div class="tier-fill tier-e-fill" style="width: 0%"></div></div>
+        <div class="tier-meta"><b><span class="tier-e-sent">0</span></b> / 1</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- EVENTS KPIs -->
+  <section>
+    <h2 class="sec">Events KPIs</h2>
+    <div class="kpi-row cols-4">
+      <div class="kpi-tile">
+        <div class="label">Identified</div>
+        <div><span class="num kpi-events-identified">7</span><span class="total">/5</span></div>
+      </div>
+      <div class="kpi-tile">
+        <div class="label">RSVP yes</div>
+        <div><span class="num kpi-events-rsvp">0</span></div>
+      </div>
+      <div class="kpi-tile">
+        <div class="label">Attended</div>
+        <div><span class="num kpi-events-attended">0</span></div>
+      </div>
+      <div class="kpi-tile">
+        <div class="label">In window May 15–29</div>
+        <div><span class="num kpi-events-in-window">0</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- LOGISTICS -->
+  <section>
+    <h2 class="sec">Logistics &amp; readiness</h2>
+    <div class="logistics-grid">
+
+      <div class="logistics-group">
+        <h4>Group A · Travel</h4>
+        <ul class="logistics-list">
+          <li class="logistics-item" id="logistics-flights" data-state="not-started">
+            <div class="logistics-label-block">
+              <span class="logistics-label">Flights booked</span>
+              <span class="logistics-note">Outbound + return · window May 15–29</span>
+            </div>
+            <span class="pill pill-grey">Not started</span>
+          </li>
+          <li class="logistics-item" id="logistics-accommodation" data-state="not-started">
+            <div class="logistics-label-block">
+              <span class="logistics-label">Accommodation booked</span>
+              <span class="logistics-note">Airbnb baseline + couch asks via 1st-degree LinkedIn</span>
+            </div>
+            <span class="pill pill-grey">Not started</span>
+          </li>
+          <li class="logistics-item" id="logistics-esta" data-state="not-started">
+            <div class="logistics-label-block">
+              <span class="logistics-label">ESTA active</span>
+              <span class="logistics-note">90-day tourist class · confirm in date</span>
+            </div>
+            <span class="pill pill-grey">Not started</span>
+          </li>
+          <li class="logistics-item" id="logistics-insurance" data-state="not-started">
+            <div class="logistics-label-block">
+              <span class="logistics-label">Travel insurance</span>
+            </div>
+            <span class="pill pill-grey">Not started</span>
+          </li>
+          <li class="logistics-item" id="logistics-phone" data-state="not-started">
+            <div class="logistics-label-block">
+              <span class="logistics-label">International phone / data plan</span>
+            </div>
+            <span class="pill pill-grey">Not started</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="logistics-group">
+        <h4>Group B · Financial</h4>
+        <ul class="logistics-list">
+          <li class="logistics-item" id="logistics-budget" data-state="not-started">
+            <div class="logistics-label-block">
+              <span class="logistics-label">Trip budget set</span>
+              <span class="logistics-note">$8–10k all-in</span>
+            </div>
+            <span class="pill pill-grey">Not started</span>
+          </li>
+          <li class="logistics-item" id="logistics-cash" data-state="in-progress">
+            <div class="logistics-label-block">
+              <span class="logistics-label">Cash position pre-trip</span>
+              <span class="logistics-note">SEAF wages ~$4k landing Apr 30 · Diane listed $4k</span>
+            </div>
+            <span class="pill pill-amber">In progress</span>
+          </li>
+          <li class="logistics-item" id="logistics-fx" data-state="not-started">
+            <div class="logistics-label-block">
+              <span class="logistics-label">FX / no-fee card setup</span>
+              <span class="logistics-note">Wise / Revolut / equivalent</span>
+            </div>
+            <span class="pill pill-grey">Not started</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="logistics-group">
+        <h4>Group C · AU-side handover</h4>
+        <ul class="logistics-list">
+          <li class="logistics-item" id="logistics-diane-handover" data-state="not-started">
+            <div class="logistics-label-block">
+              <span class="logistics-label">Diane handover to Jack</span>
+              <span class="logistics-note">Confirmed for absence window</span>
+            </div>
+            <span class="pill pill-grey">Not started</span>
+          </li>
+          <li class="logistics-item" id="logistics-phd-signoff" data-state="in-progress">
+            <div class="logistics-label-block">
+              <span class="logistics-label">PhD sign-off · Matt + Clara</span>
+              <span class="logistics-note">Mirrors Trigger 2 · awaiting</span>
+            </div>
+            <span class="pill pill-amber">In progress</span>
+          </li>
+          <li class="logistics-item" id="logistics-au-calendar" data-state="not-started">
+            <div class="logistics-label-block">
+              <span class="logistics-label">AU calendar cleared</span>
+              <span class="logistics-note">May 15–29 · commitments rescheduled</span>
+            </div>
+            <span class="pill pill-grey">Not started</span>
+          </li>
+          <li class="logistics-item" id="logistics-wc-agenda" data-state="in-progress">
+            <div class="logistics-label-block">
+              <span class="logistics-label">Wildly Calm · agenda template</span>
+              <span class="logistics-note">Owed Lockie + Kieran <b>tomorrow</b> Wed 29 Apr</span>
+            </div>
+            <span class="pill pill-amber">In progress</span>
+          </li>
+        </ul>
+      </div>
+
+      <div class="logistics-group">
+        <h4>Group D · Trip prep</h4>
+        <ul class="logistics-list">
+          <li class="logistics-item" id="logistics-reading" data-state="not-started">
+            <div class="logistics-label-block">
+              <span class="logistics-label">Reading list completed</span>
+              <span class="logistics-note">~90 min · Bloomberg HF0 · Finn Meeks "Minus One" · Antler SF launch · Clifford McKinsey</span>
+            </div>
+            <span class="pill pill-grey">Not started</span>
+          </li>
+          <li class="logistics-item" id="logistics-meetings-cal" data-state="not-started">
+            <div class="logistics-label-block">
+              <span class="logistics-label">Calendar built · meetings + buffer + transit</span>
+            </div>
+            <span class="pill pill-grey">Not started</span>
+          </li>
+        </ul>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- TRIGGER DETAIL -->
+  <section>
+    <h2 class="sec">Trigger detail · why each is in its current state</h2>
+    <div class="trigger-detail-grid">
+
+      <div class="trigger-card grey" id="trigger-1-detail">
+        <div class="trigger-card-head">
+          <span class="trigger-card-title">01 · ≥3 in-person SF coffees</span>
+          <span class="pill pill-grey">Not started</span>
+        </div>
+        <p class="note"><b>0 of ≥3 confirmed.</b> <b>10 sent</b> (Tier A 5/9 · B 3/8 · C 2/9) · <b>1 replied-yes</b> (Julia Denoly-Lepic — Bridge Principal · willing to meet next week, Calendly out). Major signal toward EF Phase-2 channel; meeting will be video, not in-person SF, so trigger stays grey until a coffee is booked.</p>
+      </div>
+
+      <div class="trigger-card amber" id="trigger-2-detail">
+        <div class="trigger-card-head">
+          <span class="trigger-card-title">02 · PhD sign-off · Matt + Clara</span>
+          <span class="pill pill-amber">In progress</span>
+        </div>
+        <p class="note">Corrections complete <b>2026-04-15</b>. Verbal check-in with Matt 2026-04-22 — busy, expects to get to it soon. Clara still email-only. Hard deadline <b>2026-05-06</b>.</p>
+      </div>
+
+      <div class="trigger-card amber" id="trigger-3-detail">
+        <div class="trigger-card-head">
+          <span class="trigger-card-title">03 · EF SF response</span>
+          <span class="pill pill-amber">In progress</span>
+        </div>
+        <p class="note">Application submitted <b>2026-04-20</b>. Mid-May reply expected per EF norm. <b>Day-21 auto-nudge due 2026-05-11</b> if silent.</p>
+      </div>
+
+      <div class="trigger-card amber" id="trigger-4-detail">
+        <div class="trigger-card-head">
+          <span class="trigger-card-title">04 · Wave-1 UK ships</span>
+          <span class="pill pill-amber">In progress</span>
+        </div>
+        <p class="note">Templates ready (Mick feedback actioned). <b>Wellington Maths</b> form 30% filled · referee asks in flight: Matt sent 2026-04-27 (email); Jada Gmail draft saved awaiting send. <b>Winchester Maths + Physics</b> closes May 1 · <b>Marlborough</b> closes May 12 (collides with proposed flight week — ship before departure).</p>
+      </div>
+
+      <div class="trigger-card amber" id="trigger-5-detail">
+        <div class="trigger-card-head">
+          <span class="trigger-card-title">05 · Financial · SEAF + Diane</span>
+          <span class="pill pill-amber">In progress</span>
+        </div>
+        <p class="note">SEAF wages <b>~$4k landing Thu 2026-04-30</b>. Diane listed at <b>$4k</b> (more interest at this price). Decision point ~Apr 30 — held until cash position is known, not assumed.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="bottom">
+    Snapshot updated <b><span class="last-updated-2">2026-04-29 10:00 PM AEST</span></b> · static page, edited as Sam reports progress · granular state in the SF Sheets.
+    <div class="links">
+      <a href="https://docs.google.com/spreadsheets/d/1PSnGIpAiJUsgojZlelj5-pmeuHCbbcm9DappYpVK0ko/edit" target="_blank" rel="noopener">Outreach Sheet</a>
+      <a href="https://docs.google.com/spreadsheets/d/1XzH6lphugwSKQTOLyTqjSCXhKZpnOJVvhTYE50dArOM/edit" target="_blank" rel="noopener">Events Sheet</a>
+      <a href="../notes/research/sf-trip-2026-05/outreach-strategy.md" target="_blank" rel="noopener">Outreach playbook</a>
+      <a href="../notes/_layers/6-goals.md" target="_blank" rel="noopener">Layer 6 · Priority 2.5</a>
+    </div>
+  </footer>
+
+</div>
+</body>
+</html>
