@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Productivity Tracker — Sam Davis</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<meta name="description" content="Daily productivity tracker — not for public indexing.">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;0,800;1,700;1,800&display=swap');
+
+  :root {
+    --bg: #FAF7EE;
+    --bg-soft: #F2EEDD;
+    --bg-card: #DCE0B6;
+    --bg-card-hi: #C8CEA0;
+    --bg-card-soft: #E8E8C8;
+    --ink: #3E3418;
+    --ink-soft: #6B5F3A;
+    --ink-faint: #998D6B;
+    --accent: #8F7530;
+    --accent-bright: #B89B4A;
+    --accent-deep: #6B5624;
+    --rule: #B0B490;
+    --good: #7A8B3F;
+    --bad: #A85A3F;
+    --warn: #C68A2E;
+    --neutral: #998D6B;
+    --grade-hit-bg:     rgba(122, 139, 63, 0.85);
+    --grade-hit-bd:     #5D6B2E;
+    --grade-partial-bg: rgba(198, 138, 46, 0.85);
+    --grade-partial-bd: #8B621E;
+    --grade-miss-bg:    rgba(168, 90, 63, 0.85);
+    --grade-miss-bd:    #6B3A28;
+    --grade-nodata-bg:  rgba(153, 141, 107, 0.16);
+    --grade-nodata-bd:  rgba(153, 141, 107, 0.35);
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+    --sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    --serif: "Playfair Display", Georgia, "Times New Roman", serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.5;
+  }
+
+  a { color: var(--accent); text-decoration: underline; text-decoration-color: rgba(143, 117, 48, 0.35); }
+  a:hover { text-decoration-color: var(--accent); }
+
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 32px 32px 60px;
+  }
+  @media (max-width: 720px) { .container { padding: 24px 18px 50px; } }
+
+  /* HEADER */
+  header.top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding-bottom: 14px;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 28px;
+    gap: 16px;
+  }
+  header.top .ident { font-size: 13px; color: var(--ink-soft); padding-top: 4px; }
+  header.top .ident b { font-weight: 700; color: var(--ink); }
+  header.top .meta {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    color: var(--ink-faint);
+    text-align: right;
+    letter-spacing: 0.05em;
+    line-height: 1.7;
+  }
+  header.top .meta b { color: var(--ink); font-weight: 700; }
+
+  /* HERO */
+  .hero {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 14px;
+  }
+  h1 {
+    font-family: var(--serif);
+    font-size: 56px;
+    line-height: 1.0;
+    letter-spacing: -0.02em;
+    font-weight: 800;
+    color: var(--ink);
+    margin-bottom: 18px;
+  }
+  @media (max-width: 720px) { h1 { font-size: 40px; } }
+  h1 .accent { color: var(--accent); font-style: italic; font-weight: 700; }
+  .lede {
+    font-size: 15px;
+    color: var(--ink-soft);
+    line-height: 1.6;
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  /* SECTION */
+  section { margin-bottom: 44px; }
+  h2.sec {
+    font-family: var(--mono);
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent);
+    font-weight: 600;
+    margin-bottom: 14px;
+  }
+
+  /* PILLS */
+  .pill {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 9.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    padding: 3px 8px;
+    border-radius: 3px;
+    border: 1px solid;
+    white-space: nowrap;
+  }
+  .pill-green { background: rgba(122, 139, 63, 0.20); color: #4F5C28; border-color: rgba(122, 139, 63, 0.55); }
+  .pill-amber { background: rgba(198, 138, 46, 0.20); color: #7A5418; border-color: rgba(198, 138, 46, 0.55); }
+  .pill-red   { background: rgba(168, 90, 63, 0.20);  color: #6B3A28; border-color: rgba(168, 90, 63, 0.55); }
+  .pill-grey  { background: rgba(153, 141, 107, 0.18); color: var(--ink-faint); border-color: rgba(153, 141, 107, 0.45); }
+
+  /* VERDICT */
+  .verdict {
+    background: linear-gradient(135deg, var(--accent-bright) 0%, var(--accent) 100%);
+    border: 1px solid var(--accent-deep);
+    border-radius: 10px;
+    padding: 22px 26px;
+    color: var(--ink);
+    margin-bottom: 28px;
+  }
+  .verdict-head {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 28px;
+    align-items: center;
+  }
+  @media (max-width: 720px) { .verdict-head { grid-template-columns: 1fr; gap: 14px; } }
+  .verdict-stat { display: flex; flex-direction: column; }
+  .verdict-stat .label {
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    font-weight: 600;
+    color: var(--accent-deep);
+    margin-bottom: 4px;
+  }
+  .verdict-state {
+    font-family: var(--serif);
+    font-size: 54px;
+    font-weight: 800;
+    line-height: 1;
+    color: var(--ink);
+  }
+  @media (max-width: 720px) { .verdict-state { font-size: 42px; } }
+  .verdict-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 14px;
+    color: var(--ink);
+    line-height: 1.45;
+  }
+  .verdict-summary b { font-weight: 700; }
+  .streak-block {
+    text-align: right;
+  }
+  .streak-num {
+    font-family: var(--serif);
+    font-size: 38px;
+    font-weight: 800;
+    line-height: 1;
+    color: var(--ink);
+  }
+  .streak-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.18em;
+    font-weight: 600;
+    color: var(--accent-deep);
+    margin-top: 4px;
+  }
+
+  /* PRIORITY CARDS */
+  .priority-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin-bottom: 28px;
+  }
+  @media (max-width: 880px) { .priority-grid { grid-template-columns: 1fr; } }
+  .priority-card {
+    background: var(--bg-card);
+    border: 1px solid var(--rule);
+    border-top: 3px solid var(--accent);
+    border-radius: 6px;
+    padding: 16px 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .priority-card.hit     { border-top-color: var(--good); }
+  .priority-card.partial { border-top-color: var(--warn); }
+  .priority-card.miss    { border-top-color: var(--bad); }
+  .priority-card.drift   { border-top-color: var(--bad); border-top-style: dashed; }
+  .priority-card.no-data { border-top-color: var(--neutral); }
+  .priority-card .head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .priority-card .slot-label {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    font-weight: 700;
+    color: var(--accent-deep);
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+  }
+  .priority-card .name {
+    font-family: var(--serif);
+    font-size: 16px;
+    line-height: 1.3;
+    font-weight: 700;
+    color: var(--ink);
+  }
+  .priority-card .evidence {
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+  }
+
+  /* KPI TILES */
+  .kpi-row { display: grid; gap: 12px; grid-template-columns: repeat(4, 1fr); }
+  @media (max-width: 720px) { .kpi-row { grid-template-columns: repeat(2, 1fr); } }
+  .kpi-tile {
+    background: var(--bg-soft);
+    border: 1px solid var(--rule);
+    border-top: 3px solid var(--accent);
+    border-radius: 6px;
+    padding: 12px 14px 14px;
+  }
+  .kpi-tile .label {
+    font-family: var(--mono);
+    font-size: 9.5px;
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    color: var(--accent);
+    font-weight: 700;
+    margin-bottom: 6px;
+    line-height: 1.3;
+  }
+  .kpi-tile .num {
+    font-family: var(--serif);
+    font-size: 32px;
+    line-height: 1;
+    font-weight: 800;
+    color: var(--ink);
+  }
+
+  /* HISTORY STRIPS */
+  .strip {
+    display: grid;
+    grid-template-columns: 64px 1fr;
+    gap: 12px;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+  .strip-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--accent-deep);
+    text-transform: uppercase;
+    letter-spacing: 0.10em;
+  }
+  .strip-cells {
+    display: grid;
+    grid-template-columns: repeat(30, 1fr);
+    gap: 3px;
+  }
+  .cell {
+    height: 22px;
+    border-radius: 2px;
+    border: 1px solid var(--grade-nodata-bd);
+    background: var(--grade-nodata-bg);
+    cursor: help;
+  }
+  .cell[data-grade="hit"]     { background: var(--grade-hit-bg);     border-color: var(--grade-hit-bd); }
+  .cell[data-grade="partial"] { background: var(--grade-partial-bg); border-color: var(--grade-partial-bd); }
+  .cell[data-grade="miss"]    { background: var(--grade-miss-bg);    border-color: var(--grade-miss-bd); }
+  .cell[data-grade="drift"] {
+    background: repeating-linear-gradient(
+      45deg,
+      rgba(168, 90, 63, 0.35),
+      rgba(168, 90, 63, 0.35) 3px,
+      rgba(168, 90, 63, 0.75) 3px,
+      rgba(168, 90, 63, 0.75) 6px
+    );
+    border-color: var(--grade-miss-bd);
+  }
+  .cell.today { outline: 2px solid var(--ink); outline-offset: 1px; }
+
+  /* DAY-AXIS LABELS */
+  .day-axis {
+    display: grid;
+    grid-template-columns: 64px 1fr;
+    gap: 12px;
+    align-items: center;
+    margin-top: 4px;
+    margin-bottom: 22px;
+  }
+  .day-axis-spacer { }
+  .day-axis-labels {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--ink-faint);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .day-axis-labels .left  { text-align: left; }
+  .day-axis-labels .mid   { text-align: center; }
+  .day-axis-labels .right { text-align: right; }
+
+  /* SPARKLINE */
+  .sparkline-wrap {
+    background: var(--bg-soft);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 14px 18px;
+  }
+  .sparkline-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 8px;
+  }
+  .sparkline-head .label {
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: var(--accent);
+    font-weight: 700;
+  }
+  .sparkline-head .meta {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-soft);
+  }
+  .sparkline-head .meta b { color: var(--ink); font-weight: 700; }
+  .sparkline-svg {
+    width: 100%;
+    height: 56px;
+    display: block;
+  }
+  .sparkline-area { fill: rgba(143, 117, 48, 0.20); }
+  .sparkline-line { fill: none; stroke: var(--accent-deep); stroke-width: 1.5; }
+  .sparkline-axis { fill: none; stroke: var(--rule); stroke-width: 0.5; stroke-dasharray: 2 3; }
+
+  /* LEGEND */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px 22px;
+    align-items: center;
+    margin-top: 16px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--ink-soft);
+  }
+  .legend-key {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .legend-swatch {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    border-radius: 2px;
+    border: 1px solid;
+  }
+  .legend-swatch.hit     { background: var(--grade-hit-bg);     border-color: var(--grade-hit-bd); }
+  .legend-swatch.partial { background: var(--grade-partial-bg); border-color: var(--grade-partial-bd); }
+  .legend-swatch.miss    { background: var(--grade-miss-bg);    border-color: var(--grade-miss-bd); }
+  .legend-swatch.drift {
+    background: repeating-linear-gradient(
+      45deg,
+      rgba(168, 90, 63, 0.35),
+      rgba(168, 90, 63, 0.35) 2px,
+      rgba(168, 90, 63, 0.75) 2px,
+      rgba(168, 90, 63, 0.75) 4px
+    );
+    border-color: var(--grade-miss-bd);
+  }
+  .legend-swatch.no-data { background: var(--grade-nodata-bg); border-color: var(--grade-nodata-bd); }
+
+  /* PLACEHOLDER */
+  .placeholder-banner {
+    background: var(--bg-card-soft);
+    border: 1px dashed var(--rule);
+    border-radius: 6px;
+    padding: 16px 20px;
+    text-align: center;
+    color: var(--ink-soft);
+    font-size: 13.5px;
+    margin-bottom: 24px;
+  }
+  .placeholder-banner b { color: var(--ink); font-weight: 700; }
+
+  /* FOOTER */
+  footer.bottom {
+    margin-top: 56px;
+    padding-top: 18px;
+    border-top: 1px solid var(--rule);
+    font-family: var(--mono);
+    font-size: 10.5px;
+    color: var(--ink-faint);
+    letter-spacing: 0.05em;
+    line-height: 1.7;
+  }
+</style>
+</head>
+<body>
+<a href="../" style="position:fixed;top:14px;left:14px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:12px;color:#6B5F3A;text-decoration:none;background:#F2EEDD;padding:6px 12px;border-radius:6px;border:1px solid #B0B490;z-index:1000;">&larr; Trackers hub</a>
+<div class="container">
+
+  <!-- HEADER -->
+  <header class="top">
+    <div class="ident"><b>Productivity Tracker</b> · daily intentionality</div>
+    <div class="meta">
+      LAST UPDATED · <b><span class="last-updated">2026-04-29 22:15 AEST</span></b><br>
+      TODAY · <b><span class="today-date">2026-04-29</span></b>
+    </div>
+  </header>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="eyebrow">Intentionality first · volume second</div>
+    <h1>Did today <span class="accent">count?</span></h1>
+    <p class="lede">Three priorities named each day. Did P1 / P2 / P3 move? Volume is supporting context — the headline is whether the named intent shipped. Streaks build over weeks; slumps surface fast.</p>
+  </div>
+
+  <!-- TODAY -->
+  <section>
+    <h2 class="sec">Today</h2>
+
+    <!-- placeholder-banner-start -->
+    <!-- placeholder-banner-end -->
+
+    <div class="verdict">
+      <div class="verdict-head">
+        <div class="verdict-stat">
+          <span class="label">Verdict</span>
+          <span class="verdict-state">AMBER</span>
+        </div>
+        <div class="verdict-summary">
+          <span><b><span class="hits-today">2</span> of 3</b> priorities hit</span>
+          <span class="verdict-note">Wave-1 Wellington shipped · EF PIE batch 2 + Julia DM out · Imi conversion partial.</span>
+        </div>
+        <div class="streak-block">
+          <div class="streak-num"><span class="streak-count">0</span></div>
+          <div class="streak-label">Green-day streak</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="priority-grid">
+      <div class="priority-card hit">
+        <div class="head">
+          <span class="slot-label">P1</span>
+          <span class="pill pill-green p1-grade-pill">Hit</span>
+        </div>
+        <div class="name p1-name">Ship 5 applications (Wave-1)</div>
+        <div class="evidence p1-evidence">Wellington Maths submitted (Wave-1 #1/4)</div>
+      </div>
+      <div class="priority-card hit">
+        <div class="head">
+          <span class="slot-label">P2</span>
+          <span class="pill pill-green p2-grade-pill">Hit</span>
+        </div>
+        <div class="name p2-name">EF PIE Field Survey + SF trip pre-work</div>
+        <div class="evidence p2-evidence">PIE batch 2: Aimee + Rio + Christopher sent + Julia LinkedIn DM</div>
+      </div>
+      <div class="priority-card partial">
+        <div class="head">
+          <span class="slot-label">P3</span>
+          <span class="pill pill-amber p3-grade-pill">Partial</span>
+        </div>
+        <div class="name p3-name">Convert 1 GE/Trace/Net Nada</div>
+        <div class="evidence p3-evidence">Imi email + meta-pipeline 1-pager + Carlos intro ask sent</div>
+      </div>
+    </div>
+
+    <div class="kpi-row">
+      <div class="kpi-tile">
+        <div class="label">Tasks completed</div>
+        <div class="num"><span class="kpi-todoist">7</span></div>
+      </div>
+      <div class="kpi-tile">
+        <div class="label">Decisions logged</div>
+        <div class="num"><span class="kpi-decisions">5</span></div>
+      </div>
+      <div class="kpi-tile">
+        <div class="label">Emails sent</div>
+        <div class="num"><span class="kpi-emails">5</span></div>
+      </div>
+      <div class="kpi-tile">
+        <div class="label">Sessions run</div>
+        <div class="num"><span class="kpi-sessions">4</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- HISTORY -->
+  <section>
+    <h2 class="sec">Last 30 days</h2>
+
+    <div class="strip">
+      <div class="strip-label">P1</div>
+      <div class="strip-cells">
+        <!-- p1-cells-start -->
+        <div class="cell" data-day-iso="2026-03-31" data-grade="no-data" title="2026-03-31 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-01" data-grade="no-data" title="2026-04-01 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-02" data-grade="no-data" title="2026-04-02 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-03" data-grade="no-data" title="2026-04-03 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-04" data-grade="no-data" title="2026-04-04 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-05" data-grade="no-data" title="2026-04-05 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-06" data-grade="no-data" title="2026-04-06 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-07" data-grade="no-data" title="2026-04-07 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-08" data-grade="no-data" title="2026-04-08 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-09" data-grade="no-data" title="2026-04-09 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-10" data-grade="no-data" title="2026-04-10 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-11" data-grade="no-data" title="2026-04-11 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-12" data-grade="no-data" title="2026-04-12 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-13" data-grade="no-data" title="2026-04-13 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-14" data-grade="no-data" title="2026-04-14 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-15" data-grade="no-data" title="2026-04-15 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-16" data-grade="no-data" title="2026-04-16 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-17" data-grade="no-data" title="2026-04-17 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-18" data-grade="no-data" title="2026-04-18 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-19" data-grade="no-data" title="2026-04-19 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-20" data-grade="no-data" title="2026-04-20 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-21" data-grade="no-data" title="2026-04-21 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-22" data-grade="no-data" title="2026-04-22 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-23" data-grade="no-data" title="2026-04-23 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-24" data-grade="no-data" title="2026-04-24 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-25" data-grade="no-data" title="2026-04-25 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-26" data-grade="no-data" title="2026-04-26 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-27" data-grade="no-data" title="2026-04-27 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-28" data-grade="no-data" title="2026-04-28 · No data"></div>
+        <div class="cell today" data-day-iso="2026-04-29" data-grade="hit" title="2026-04-29 · Ship 5 applications (Wave-1) · hit: Wellington Maths submitted (Wave-1 #1/4)"></div>
+        <!-- p1-cells-end -->
+      </div>
+    </div>
+
+    <div class="strip">
+      <div class="strip-label">P2</div>
+      <div class="strip-cells">
+        <!-- p2-cells-start -->
+        <div class="cell" data-day-iso="2026-03-31" data-grade="no-data" title="2026-03-31 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-01" data-grade="no-data" title="2026-04-01 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-02" data-grade="no-data" title="2026-04-02 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-03" data-grade="no-data" title="2026-04-03 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-04" data-grade="no-data" title="2026-04-04 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-05" data-grade="no-data" title="2026-04-05 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-06" data-grade="no-data" title="2026-04-06 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-07" data-grade="no-data" title="2026-04-07 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-08" data-grade="no-data" title="2026-04-08 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-09" data-grade="no-data" title="2026-04-09 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-10" data-grade="no-data" title="2026-04-10 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-11" data-grade="no-data" title="2026-04-11 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-12" data-grade="no-data" title="2026-04-12 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-13" data-grade="no-data" title="2026-04-13 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-14" data-grade="no-data" title="2026-04-14 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-15" data-grade="no-data" title="2026-04-15 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-16" data-grade="no-data" title="2026-04-16 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-17" data-grade="no-data" title="2026-04-17 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-18" data-grade="no-data" title="2026-04-18 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-19" data-grade="no-data" title="2026-04-19 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-20" data-grade="no-data" title="2026-04-20 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-21" data-grade="no-data" title="2026-04-21 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-22" data-grade="no-data" title="2026-04-22 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-23" data-grade="no-data" title="2026-04-23 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-24" data-grade="no-data" title="2026-04-24 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-25" data-grade="no-data" title="2026-04-25 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-26" data-grade="no-data" title="2026-04-26 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-27" data-grade="no-data" title="2026-04-27 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-28" data-grade="no-data" title="2026-04-28 · No data"></div>
+        <div class="cell today" data-day-iso="2026-04-29" data-grade="hit" title="2026-04-29 · EF PIE Field Survey + SF trip pre-work · hit: PIE batch 2: Aimee + Rio + Christopher sent + Julia LinkedIn DM"></div>
+        <!-- p2-cells-end -->
+      </div>
+    </div>
+
+    <div class="strip">
+      <div class="strip-label">P3</div>
+      <div class="strip-cells">
+        <!-- p3-cells-start -->
+        <div class="cell" data-day-iso="2026-03-31" data-grade="no-data" title="2026-03-31 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-01" data-grade="no-data" title="2026-04-01 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-02" data-grade="no-data" title="2026-04-02 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-03" data-grade="no-data" title="2026-04-03 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-04" data-grade="no-data" title="2026-04-04 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-05" data-grade="no-data" title="2026-04-05 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-06" data-grade="no-data" title="2026-04-06 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-07" data-grade="no-data" title="2026-04-07 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-08" data-grade="no-data" title="2026-04-08 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-09" data-grade="no-data" title="2026-04-09 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-10" data-grade="no-data" title="2026-04-10 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-11" data-grade="no-data" title="2026-04-11 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-12" data-grade="no-data" title="2026-04-12 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-13" data-grade="no-data" title="2026-04-13 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-14" data-grade="no-data" title="2026-04-14 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-15" data-grade="no-data" title="2026-04-15 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-16" data-grade="no-data" title="2026-04-16 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-17" data-grade="no-data" title="2026-04-17 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-18" data-grade="no-data" title="2026-04-18 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-19" data-grade="no-data" title="2026-04-19 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-20" data-grade="no-data" title="2026-04-20 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-21" data-grade="no-data" title="2026-04-21 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-22" data-grade="no-data" title="2026-04-22 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-23" data-grade="no-data" title="2026-04-23 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-24" data-grade="no-data" title="2026-04-24 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-25" data-grade="no-data" title="2026-04-25 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-26" data-grade="no-data" title="2026-04-26 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-27" data-grade="no-data" title="2026-04-27 · No data"></div>
+        <div class="cell" data-day-iso="2026-04-28" data-grade="no-data" title="2026-04-28 · No data"></div>
+        <div class="cell today" data-day-iso="2026-04-29" data-grade="partial" title="2026-04-29 · Convert 1 GE/Trace/Net Nada · partial: Imi email + meta-pipeline 1-pager + Carlos intro ask sent"></div>
+        <!-- p3-cells-end -->
+      </div>
+    </div>
+
+    <div class="day-axis">
+      <div class="day-axis-spacer"></div>
+      <div class="day-axis-labels">
+        <span class="left">30 days ago</span>
+        <span class="mid">15 days ago</span>
+        <span class="right">today</span>
+      </div>
+    </div>
+
+    <div class="sparkline-wrap">
+      <div class="sparkline-head">
+        <span class="label">Volume — last 30 days</span>
+        <span class="meta">Total: <b><span class="volume-total">35</span></b> · Avg/day: <b><span class="volume-avg">35.0</span></b></span>
+      </div>
+      <!-- sparkline-start -->
+      <svg class="sparkline-svg" viewBox="0 0 600 56" preserveAspectRatio="none">
+        <line class="sparkline-axis" x1="0" y1="50" x2="600" y2="50"></line>
+        <polygon class="sparkline-area" points="0,50 20.69,50 41.38,50 62.07,50 82.76,50 103.45,50 124.14,50 144.83,50 165.52,50 186.21,50 206.9,50 227.59,50 248.28,50 268.97,50 289.66,50 310.34,50 331.03,50 351.72,50 372.41,50 393.1,50 413.79,50 434.48,50 455.17,50 475.86,50 496.55,50 517.24,50 537.93,50 558.62,50 579.31,50 600,6 600,50"></polygon>
+        <polyline class="sparkline-line" points="0,50 20.69,50 41.38,50 62.07,50 82.76,50 103.45,50 124.14,50 144.83,50 165.52,50 186.21,50 206.9,50 227.59,50 248.28,50 268.97,50 289.66,50 310.34,50 331.03,50 351.72,50 372.41,50 393.1,50 413.79,50 434.48,50 455.17,50 475.86,50 496.55,50 517.24,50 537.93,50 558.62,50 579.31,50 600,6"></polyline>
+      </svg>
+      <!-- sparkline-end -->
+    </div>
+
+    <div class="legend">
+      <span class="legend-key"><span class="legend-swatch hit"></span> Hit</span>
+      <span class="legend-key"><span class="legend-swatch partial"></span> Partial</span>
+      <span class="legend-key"><span class="legend-swatch miss"></span> Miss</span>
+      <span class="legend-key"><span class="legend-swatch drift"></span> Drift (day got eaten)</span>
+      <span class="legend-key"><span class="legend-swatch no-data"></span> No data (skipped /end-day)</span>
+    </div>
+  </section>
+
+  <footer class="bottom">
+    Static dashboard · refreshed by <b>/productivity</b> from <b>productivity:</b> frontmatter blocks across the last 30 daily session notes. Source-of-truth lives in the session notes; this is a derived view.<br>
+    <span class="last-updated-2">2026-04-29 22:15 AEST · first real /end-day refresh</span>
+  </footer>
+
+</div>
+</body>
+</html>
