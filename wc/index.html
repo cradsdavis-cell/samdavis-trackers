@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow, noarchive">
+<title>WC Retreats — Live Dashboard</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;0,800;1,700;1,800&display=swap');
+
+  :root {
+    --bg: #FAF7EE; --bg-soft: #F2EEDD; --bg-card: #DCE0B6; --bg-card-soft: #E8E8C8;
+    --ink: #3E3418; --ink-soft: #6B5F3A; --ink-faint: #998D6B;
+    --accent: #8F7530; --accent-bright: #B89B4A; --accent-deep: #6B5624;
+    --rule: #B0B490; --rule-soft: rgba(176, 180, 144, 0.4);
+    --good: #7A8B3F; --bad: #A85A3F; --warn: #C68A2E; --info: #4A6B82; --neutral: #998D6B;
+    --crossing: #5D7E5C;  /* sage — alpine */
+    --oct:      #C68A2E;  /* warm sand — autumn */
+    --nov:      #5A6B7E;  /* slate — winter */
+    --sam:    #4A6B82;  /* blue */
+    --lockie: #7A8B3F;  /* green */
+    --kieran: #A85A3F;  /* red */
+    --all:    #8B6B9E;  /* purple */
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    --sans: "Inter", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    --serif: "Playfair Display", Georgia, serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--bg); color: var(--ink); font-family: var(--sans); font-size: 15px; -webkit-font-smoothing: antialiased; line-height: 1.5; min-height: 100vh; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  .container { max-width: 1400px; margin: 0 auto; padding: 28px 32px 60px; }
+  @media (max-width: 720px) { .container { padding: 18px 14px 50px; } }
+
+  /* Header */
+  header.top { display: flex; align-items: flex-start; justify-content: space-between; padding-bottom: 18px; border-bottom: 1px solid var(--rule); margin-bottom: 28px; gap: 16px; flex-wrap: wrap; }
+  header.top .ident { font-size: 13px; color: var(--ink-soft); }
+  header.top .ident b { color: var(--ink); font-weight: 700; }
+  header.top .meta { font-family: var(--mono); font-size: 11px; color: var(--ink-faint); text-align: right; letter-spacing: 0.05em; line-height: 1.7; }
+  header.top .meta b { color: var(--ink); font-weight: 700; }
+  .pulse { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--good); margin-right: 6px; animation: pulse 2s infinite; vertical-align: middle; }
+  .pulse.stale { background: var(--bad); animation: none; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+  /* Hero */
+  .hero { text-align: center; margin-bottom: 32px; }
+  .eyebrow { font-family: var(--mono); font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; font-weight: 600; }
+  h1 { font-family: var(--serif); font-size: clamp(38px, 5.5vw, 56px); line-height: 1.0; font-weight: 800; letter-spacing: -0.015em; margin-bottom: 12px; }
+  h1 em { color: var(--accent); font-style: italic; }
+  .lede { font-size: 15px; color: var(--ink-soft); max-width: 700px; margin: 0 auto; }
+
+  /* Filter chips */
+  .filters { display: flex; gap: 8px; justify-content: center; margin-bottom: 36px; flex-wrap: wrap; }
+  .chip { font-family: var(--mono); font-size: 12px; letter-spacing: 0.08em; padding: 8px 16px; border: 1px solid var(--rule); border-radius: 999px; background: var(--bg-soft); color: var(--ink-soft); cursor: pointer; transition: all 0.15s; text-transform: uppercase; font-weight: 600; }
+  .chip:hover { background: var(--bg-card); }
+  .chip.active { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+  .chip.active.sam { background: var(--sam); border-color: var(--sam); }
+  .chip.active.lockie { background: var(--lockie); border-color: var(--lockie); }
+  .chip.active.kieran { background: var(--kieran); border-color: var(--kieran); }
+
+  /* Widgets grid */
+  .widgets { display: grid; grid-template-columns: repeat(12, 1fr); gap: 14px; margin-bottom: 36px; }
+  .widget { background: var(--bg-soft); border: 1px solid var(--rule); border-radius: 10px; padding: 18px; min-height: 160px; }
+  .widget h3 { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 14px; }
+  .w-countdown { grid-column: span 12; }
+  .w-completion { grid-column: span 6; }
+  .w-workload   { grid-column: span 6; }
+  .w-burning    { grid-column: span 12; }
+  .w-distribution { grid-column: span 7; }
+  .w-heatmap    { grid-column: span 5; }
+  @media (max-width: 980px) {
+    .w-completion, .w-workload, .w-distribution, .w-heatmap { grid-column: span 12; }
+  }
+
+  /* Countdown widget */
+  .countdown-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+  .countdown-card { background: var(--bg-card-soft); border: 1px solid var(--rule); border-left: 4px solid var(--neutral); border-radius: 8px; padding: 16px 18px; }
+  .countdown-card.crossing { border-left-color: var(--crossing); }
+  .countdown-card.oct      { border-left-color: var(--oct); }
+  .countdown-card.nov      { border-left-color: var(--nov); }
+  .countdown-card .nm { font-family: var(--mono); font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 4px; font-weight: 600; }
+  .countdown-card .days { font-family: var(--serif); font-size: 38px; font-weight: 800; line-height: 1; color: var(--ink); }
+  .countdown-card .days .unit { font-size: 14px; color: var(--ink-faint); font-family: var(--mono); font-weight: 500; margin-left: 4px; }
+  .countdown-card .meta { font-size: 11.5px; color: var(--ink-soft); margin-top: 6px; font-family: var(--mono); }
+  @media (max-width: 720px) { .countdown-row { grid-template-columns: 1fr; } }
+
+  /* Burning per person widget */
+  .burning-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+  .burning-col h4 { font-family: var(--mono); font-size: 12px; letter-spacing: 0.1em; padding: 6px 10px; border-radius: 4px; color: #fff; display: inline-block; margin-bottom: 10px; font-weight: 700; }
+  .burning-col.sam h4    { background: var(--sam); }
+  .burning-col.lockie h4 { background: var(--lockie); }
+  .burning-col.kieran h4 { background: var(--kieran); }
+  .burning-card { background: var(--bg-card-soft); border: 1px solid var(--rule-soft); border-left: 3px solid var(--neutral); border-radius: 6px; padding: 8px 10px; margin-bottom: 6px; font-size: 13px; }
+  .burning-card.over { border-left-color: var(--bad); background: rgba(168, 90, 63, 0.06); }
+  .burning-card .ttl { color: var(--ink); font-weight: 500; }
+  .burning-card .meta { font-family: var(--mono); font-size: 10.5px; color: var(--ink-faint); margin-top: 2px; }
+  .burning-empty { font-size: 12px; color: var(--ink-faint); font-style: italic; padding: 8px 10px; }
+  @media (max-width: 720px) { .burning-row { grid-template-columns: 1fr; } }
+
+  /* Heatmap */
+  .heatmap { display: grid; grid-template-columns: 70px repeat(4, 1fr); gap: 4px; font-family: var(--mono); font-size: 11px; }
+  .heatmap .hh { padding: 4px; text-align: center; color: var(--ink-faint); font-size: 9.5px; letter-spacing: 0.08em; text-transform: uppercase; }
+  .heatmap .rowh { padding: 8px 4px; color: var(--ink-soft); font-weight: 600; align-self: center; }
+  .heatmap .cell { padding: 10px 4px; text-align: center; border-radius: 4px; background: var(--bg-card-soft); color: var(--ink); font-weight: 700; }
+
+  /* Kanban */
+  .kanban-wrap { margin-top: 8px; }
+  h2.section { font-family: var(--serif); font-size: 22px; font-weight: 800; margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid var(--rule); }
+  .kanban { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  .kcol { background: var(--bg-soft); border: 1px solid var(--rule); border-radius: 10px; padding: 14px; min-height: 200px; }
+  .kcol-head { font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; font-weight: 700; }
+  .kcol-head .count { background: var(--ink); color: var(--bg); padding: 2px 8px; border-radius: 999px; font-size: 10.5px; }
+  .kcol.overdue { border-top: 3px solid var(--bad); }
+  .kcol.thisweek { border-top: 3px solid var(--warn); }
+  .kcol.next4 { border-top: 3px solid var(--info); }
+  .kcol.later { border-top: 3px solid var(--neutral); }
+  .kcol.overdue .kcol-head .count { background: var(--bad); }
+  .kcol.thisweek .kcol-head .count { background: var(--warn); }
+  .kcol.next4 .kcol-head .count { background: var(--info); }
+  .kcol.later .kcol-head .count { background: var(--neutral); }
+
+  .kcard { background: var(--bg); border: 1px solid var(--rule-soft); border-radius: 6px; padding: 8px 10px; margin-bottom: 6px; font-size: 12.5px; cursor: pointer; transition: all 0.15s; display: block; color: var(--ink); }
+  .kcard:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(62, 52, 24, 0.08); text-decoration: none; }
+  .kcard-head { display: flex; gap: 6px; margin-bottom: 4px; align-items: center; flex-wrap: wrap; }
+  .badge { font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.06em; padding: 2px 6px; border-radius: 3px; color: #fff; font-weight: 700; text-transform: uppercase; line-height: 1.4; }
+  .badge.crossing { background: var(--crossing); }
+  .badge.oct      { background: var(--oct); }
+  .badge.nov      { background: var(--nov); }
+  .badge.sam      { background: var(--sam); }
+  .badge.lockie   { background: var(--lockie); }
+  .badge.kieran   { background: var(--kieran); }
+  .badge.all      { background: var(--all); }
+  .badge.tent     { background: transparent; color: var(--ink-faint); border: 1px dashed var(--ink-faint); }
+  .kcard .ttl { color: var(--ink); font-weight: 500; line-height: 1.3; }
+  .kcard .due { font-family: var(--mono); font-size: 10.5px; color: var(--ink-faint); margin-top: 4px; }
+  .kcard .due.over { color: var(--bad); font-weight: 700; }
+  .kcard.dimmed { opacity: 0.25; }
+  .kempty { font-size: 12px; color: var(--ink-faint); font-style: italic; padding: 12px 4px; text-align: center; }
+
+  /* Chart canvases */
+  .chart-wrap { position: relative; height: 200px; }
+
+  /* Loading state */
+  .loading { text-align: center; padding: 80px 20px; font-family: var(--mono); font-size: 13px; color: var(--ink-faint); }
+
+  /* Footer */
+  footer { padding-top: 36px; margin-top: 36px; border-top: 1px solid var(--rule); font-family: var(--mono); font-size: 12px; color: var(--ink-faint); text-align: center; }
+  footer a { color: var(--ink); border-bottom: 1px dashed var(--ink-faint); }
+
+  @media (max-width: 980px) { .kanban { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 600px) { .kanban { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header class="top">
+    <div class="ident">
+      <b>Sam Davis</b> · Wildly Calm retreats
+    </div>
+    <div class="meta">
+      <span id="pulse" class="pulse"></span> <b id="status">Connecting…</b><br>
+      Last refresh: <b id="lastRefresh">—</b>
+    </div>
+  </header>
+
+  <div class="hero">
+    <div class="eyebrow">Wildly Calm · Live</div>
+    <h1>Three retreats. <em>One brain.</em></h1>
+    <p class="lede">Cross-board dashboard for Crossing (Aug), Oct (Lockie), and Nov VIC (Kieran). Auto-refreshes every 30 seconds — no manual update needed.</p>
+  </div>
+
+  <section class="filters" id="filters">
+    <button class="chip active" data-filter="all">Everyone</button>
+    <button class="chip" data-filter="Sam">Sam</button>
+    <button class="chip" data-filter="Lockie">Lockie</button>
+    <button class="chip" data-filter="Kieran">Kieran</button>
+  </section>
+
+  <main id="main" class="loading">Loading retreat data from Trello…</main>
+
+  <footer>
+    samdavis-trackers.live / wc — noindex · auto-refreshed via Trello API · <a href="../">trackers home</a>
+  </footer>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+<script>
+  // ====================================================================
+  //  WC Retreat Dashboard — client-side, polls Trello directly
+  // ====================================================================
+
+  // Server-side proxy at crads-ai.com keeps the Trello token out of this page
+  const API = 'https://crads-ai.com/api/wc-tasks';
+
+  let BOARDS = [];
+  const PEOPLE = ['Sam', 'Lockie', 'Kieran'];
+  const HORIZONS = ['Overdue', 'This Week', 'Next 4 Weeks', 'Later'];
+  const HORIZON_KEYS = { 'Overdue': 'overdue', 'This Week': 'thisweek', 'Next 4 Weeks': 'next4', 'Later': 'later' };
+
+  let state = {
+    cards: [],
+    filter: localStorage.getItem('wc-filter') || 'all',
+    lastFetch: null,
+    charts: {},
+  };
+
+  // ─── Fetch ─────────────────────────────────────────────────────────
+  async function fetchAll() {
+    setStatus('Refreshing…', false);
+    try {
+      const res = await fetch(API + '?t=' + Date.now());
+      if (!res.ok) throw new Error(`API returned ${res.status}`);
+      const data = await res.json();
+      BOARDS = data.boards;
+      state.cards = data.cards;
+      state.lastFetch = new Date();
+      setStatus('Live', false);
+      render();
+    } catch (e) {
+      console.error(e);
+      setStatus(`Error: ${e.message}`, true);
+    }
+  }
+
+  function setStatus(text, stale) {
+    document.getElementById('status').textContent = text;
+    document.getElementById('pulse').className = 'pulse' + (stale ? ' stale' : '');
+    if (state.lastFetch) {
+      document.getElementById('lastRefresh').textContent = state.lastFetch.toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit' }) + ' AEST';
+    }
+  }
+
+  // ─── Filter ───────────────────────────────────────────────────────
+  function matchesFilter(card, filter) {
+    if (filter === 'all') return true;
+    // For person filters: show cards where they're an owner (label) OR assigned (member)
+    return card.owners.includes(filter) || card.owners.includes('All') || card.memberNames.includes(filter);
+  }
+
+  // ─── Render ───────────────────────────────────────────────────────
+  function render() {
+    const filtered = state.cards.filter(c => matchesFilter(c, state.filter));
+    document.getElementById('main').classList.remove('loading');
+    document.getElementById('main').innerHTML = `
+      <section class="widgets">
+        <div class="widget w-countdown">
+          <h3>Days to retreat</h3>
+          <div class="countdown-row" id="wCountdown"></div>
+        </div>
+        <div class="widget w-completion">
+          <h3>Completion % per board</h3>
+          <div class="chart-wrap"><canvas id="cCompletion"></canvas></div>
+        </div>
+        <div class="widget w-workload">
+          <h3>Active workload — by person (all boards)</h3>
+          <div class="chart-wrap"><canvas id="cWorkload"></canvas></div>
+        </div>
+        <div class="widget w-burning">
+          <h3>What's due in next 7 days — per person</h3>
+          <div class="burning-row" id="wBurning"></div>
+        </div>
+        <div class="widget w-distribution">
+          <h3>Status distribution per board</h3>
+          <div class="chart-wrap"><canvas id="cDistribution"></canvas></div>
+        </div>
+        <div class="widget w-heatmap">
+          <h3>Owner load × time horizon</h3>
+          <div id="wHeatmap"></div>
+        </div>
+      </section>
+
+      <div class="kanban-wrap">
+        <h2 class="section">Active queue ${state.filter !== 'all' ? `· ${state.filter} only` : ''}</h2>
+        <div class="kanban" id="kanban"></div>
+      </div>
+    `;
+    renderCountdown();
+    renderCompletion(state.cards);  // unfiltered for board-level metric
+    renderWorkload(state.cards);    // unfiltered to show balance
+    renderBurning(state.cards);     // 3 cols per person — built-in segmentation
+    renderDistribution(state.cards);
+    renderHeatmap(state.cards);
+    renderKanban(filtered);
+  }
+
+  function renderCountdown() {
+    const today = new Date(new Date().toISOString().split('T')[0] + 'T00:00:00');
+    document.getElementById('wCountdown').innerHTML = BOARDS.map(b => {
+      const d = new Date(b.retreatDate);
+      const days = Math.ceil((d - today) / 86400000);
+      const weeks = Math.floor(days / 7);
+      const dayPart = days - weeks * 7;
+      return `<div class="countdown-card ${b.cls}">
+        <div class="nm">${b.label} · ${b.pl} PL</div>
+        <div class="days">${days}<span class="unit">days</span></div>
+        <div class="meta">${weeks}w ${dayPart}d · ${b.retreatDate}</div>
+      </div>`;
+    }).join('');
+  }
+
+  function renderCompletion(cards) {
+    const data = BOARDS.map(b => {
+      const boardCards = cards.filter(c => c.board === b.name);
+      const done = boardCards.filter(c => c.horizon === 'Done').length;
+      return { board: b, done, total: boardCards.length, pct: Math.round((done / boardCards.length) * 100) };
+    });
+    if (state.charts.completion) state.charts.completion.destroy();
+    state.charts.completion = new Chart(document.getElementById('cCompletion'), {
+      type: 'bar',
+      data: {
+        labels: data.map(d => `${d.board.label}  ${d.pct}%`),
+        datasets: [
+          { label: 'Done', data: data.map(d => d.done), backgroundColor: '#7A8B3F', stack: 's' },
+          { label: 'Open', data: data.map(d => d.total - d.done), backgroundColor: '#DCE0B6', stack: 's' },
+        ],
+      },
+      options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+        scales: { x: { stacked: true, beginAtZero: true, ticks: { font: { size: 10 } } }, y: { stacked: true, ticks: { font: { size: 11 } } } },
+        plugins: { legend: { position: 'bottom', labels: { font: { size: 11 } } } } }
+    });
+  }
+
+  function renderWorkload(cards) {
+    const open = cards.filter(c => c.horizon !== 'Done');
+    const data = PEOPLE.map(p => {
+      return BOARDS.map(b => open.filter(c => c.board === b.name && (c.owners.includes(p) || c.owners.includes('All'))).length);
+    });
+    if (state.charts.workload) state.charts.workload.destroy();
+    state.charts.workload = new Chart(document.getElementById('cWorkload'), {
+      type: 'bar',
+      data: {
+        labels: PEOPLE,
+        datasets: BOARDS.map((b, i) => ({
+          label: b.label, data: PEOPLE.map((_, j) => data[j][i]),
+          backgroundColor: [getComputedStyle(document.documentElement).getPropertyValue('--crossing'), getComputedStyle(document.documentElement).getPropertyValue('--oct'), getComputedStyle(document.documentElement).getPropertyValue('--nov')][i].trim(),
+          stack: 's',
+        })),
+      },
+      options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false,
+        scales: { x: { stacked: true, beginAtZero: true }, y: { stacked: true } },
+        plugins: { legend: { position: 'bottom', labels: { font: { size: 11 } } } } }
+    });
+  }
+
+  function renderBurning(cards) {
+    const today = new Date();
+    const cutoff = new Date(today.getTime() + 8 * 86400000);
+    const burning = cards.filter(c => c.due && new Date(c.due) <= cutoff && c.horizon !== 'Done');
+    document.getElementById('wBurning').innerHTML = PEOPLE.map(p => {
+      const mine = burning.filter(c => c.owners.includes(p) || c.owners.includes('All') || c.memberNames.includes(p))
+                          .sort((a, b) => new Date(a.due) - new Date(b.due));
+      const cardsHtml = mine.length
+        ? mine.slice(0, 8).map(c => {
+            const isOver = new Date(c.due) < today;
+            return `<a class="burning-card ${isOver ? 'over' : ''}" href="${c.url}" target="_blank">
+              <div class="ttl">${c.boardLabel.split(' ')[0]} ${c.name}</div>
+              <div class="meta">${fmtDue(c.due, today)}</div>
+            </a>`;
+          }).join('')
+        : `<div class="burning-empty">Nothing this week.</div>`;
+      return `<div class="burning-col ${p.toLowerCase()}">
+        <h4>${p} · ${mine.length}</h4>
+        ${cardsHtml}
+      </div>`;
+    }).join('');
+  }
+
+  function renderDistribution(cards) {
+    const buckets = ['Overdue', 'This Week', 'Next 4 Weeks', 'Later', 'Blocked', 'Done'];
+    const data = BOARDS.map(b => buckets.map(h => cards.filter(c => c.board === b.name && c.horizon === h).length));
+    if (state.charts.distribution) state.charts.distribution.destroy();
+    const palette = ['#A85A3F', '#C68A2E', '#4A6B82', '#998D6B', '#5A5A5A', '#7A8B3F'];
+    state.charts.distribution = new Chart(document.getElementById('cDistribution'), {
+      type: 'bar',
+      data: {
+        labels: BOARDS.map(b => b.label),
+        datasets: buckets.map((h, i) => ({ label: h, data: data.map(d => d[i]), backgroundColor: palette[i], stack: 's' })),
+      },
+      options: { responsive: true, maintainAspectRatio: false,
+        scales: { x: { stacked: true }, y: { stacked: true, beginAtZero: true } },
+        plugins: { legend: { position: 'bottom', labels: { font: { size: 10.5 } } } } }
+    });
+  }
+
+  function renderHeatmap(cards) {
+    const open = cards.filter(c => c.horizon !== 'Done');
+    const max = Math.max(...PEOPLE.flatMap(p => HORIZONS.map(h => open.filter(c => c.horizon === h && (c.owners.includes(p) || c.owners.includes('All'))).length)));
+    const intensity = (n) => max === 0 ? 0 : n / max;
+    const cells = `
+      <div class="heatmap">
+        <div class="hh"></div>
+        ${HORIZONS.map(h => `<div class="hh">${h.replace(' Weeks', 'w').replace('This ', '')}</div>`).join('')}
+        ${PEOPLE.map(p => `
+          <div class="rowh">${p}</div>
+          ${HORIZONS.map(h => {
+            const n = open.filter(c => c.horizon === h && (c.owners.includes(p) || c.owners.includes('All'))).length;
+            const t = intensity(n);
+            const bg = `rgba(143, 117, 48, ${0.10 + t * 0.55})`;
+            return `<div class="cell" style="background:${bg}">${n}</div>`;
+          }).join('')}
+        `).join('')}
+      </div>
+    `;
+    document.getElementById('wHeatmap').innerHTML = cells;
+  }
+
+  function renderKanban(filtered) {
+    const today = new Date();
+    const byHorizon = { 'Overdue': [], 'This Week': [], 'Next 4 Weeks': [], 'Later': [] };
+    filtered.forEach(c => { if (byHorizon[c.horizon]) byHorizon[c.horizon].push(c); });
+    Object.keys(byHorizon).forEach(h => byHorizon[h].sort((a, b) => (a.due || '') < (b.due || '') ? -1 : 1));
+
+    document.getElementById('kanban').innerHTML = HORIZONS.map(h => {
+      const cards = byHorizon[h];
+      const emojiFor = { 'Overdue': '🔴', 'This Week': '📅', 'Next 4 Weeks': '🔜', 'Later': '🌫️' }[h];
+      const cardsHtml = cards.length
+        ? cards.map(c => {
+            const ownerBadges = c.owners.map(o => `<span class="badge ${o.toLowerCase()}">${o}</span>`).join('');
+            const tent = c.isTentative ? `<span class="badge tent">tent</span>` : '';
+            const dueClass = c.due && new Date(c.due) < today ? 'over' : '';
+            return `<a class="kcard" href="${c.url}" target="_blank">
+              <div class="kcard-head">
+                <span class="badge ${c.boardCls}">${c.board}</span>
+                ${ownerBadges}
+                ${tent}
+              </div>
+              <div class="ttl">${escape(c.name)}</div>
+              <div class="due ${dueClass}">${c.due ? fmtDue(c.due, today) : 'no due date'}</div>
+            </a>`;
+          }).join('')
+        : `<div class="kempty">Nothing here.</div>`;
+      return `<div class="kcol ${HORIZON_KEYS[h]}">
+        <div class="kcol-head"><span>${emojiFor} ${h}</span><span class="count">${cards.length}</span></div>
+        ${cardsHtml}
+      </div>`;
+    }).join('');
+  }
+
+  // ─── Helpers ──────────────────────────────────────────────────────
+  function fmtDue(iso, today) {
+    const d = new Date(iso);
+    const days = Math.round((d - today) / 86400000);
+    if (days < -1) return `${Math.abs(days)}d overdue`;
+    if (days === -1) return `1d overdue`;
+    if (days === 0) return `today`;
+    if (days === 1) return `tomorrow`;
+    if (days < 7) return `${days}d`;
+    if (days < 28) return `${Math.round(days / 7)}w`;
+    return d.toLocaleDateString('en-AU', { day: 'numeric', month: 'short' });
+  }
+  function escape(s) { return s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'})[c]); }
+
+  // ─── Filter chip wiring ───────────────────────────────────────────
+  document.querySelectorAll('.chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      state.filter = chip.dataset.filter;
+      localStorage.setItem('wc-filter', state.filter);
+      document.querySelectorAll('.chip').forEach(c => {
+        c.classList.remove('active', 'sam', 'lockie', 'kieran');
+        if (c.dataset.filter === state.filter) {
+          c.classList.add('active');
+          if (state.filter !== 'all') c.classList.add(state.filter.toLowerCase());
+        }
+      });
+      render();
+    });
+  });
+  // Restore saved filter
+  document.querySelectorAll('.chip').forEach(c => {
+    c.classList.remove('active', 'sam', 'lockie', 'kieran');
+    if (c.dataset.filter === state.filter) {
+      c.classList.add('active');
+      if (state.filter !== 'all') c.classList.add(state.filter.toLowerCase());
+    }
+  });
+
+  // ─── Boot ─────────────────────────────────────────────────────────
+  fetchAll();
+  setInterval(fetchAll, 30000);
+</script>
+</body>
+</html>
