@@ -143,6 +143,34 @@
   .leaflet-popup-content .pop-meta{font-family:var(--mono);font-size:10.5px;color:#675a45;letter-spacing:.04em;text-transform:uppercase;display:block;margin-top:4px}
   .leaflet-control-attribution{font-size:10px!important}
 
+  /* Trail audit banner + legend pills (v4) */
+  .trail-status-banner{display:flex;align-items:center;gap:14px;padding:11px 14px;border-bottom:1px solid var(--line-soft);font-family:var(--mono);font-size:11px;letter-spacing:.04em;line-height:1.4;flex-wrap:wrap}
+  .trail-status-banner.status-strong{background:#dde6cf;color:#2c4a2b}
+  .trail-status-banner.status-mixed{background:#efe2c4;color:#7a6322}
+  .trail-status-banner.status-drive{background:#f0d6c8;color:#7a3a22}
+  .trail-status-banner.status-unknown{background:var(--paper-warm);color:#52473a}
+  .trail-status-banner .ts-icon{font-size:14px;flex-shrink:0}
+  .trail-status-banner strong{font-weight:600}
+  .trail-status-banner .ts-detail{color:inherit;opacity:.85}
+  .from-door-pill{display:inline-block;font-family:var(--mono);font-size:9px;letter-spacing:.06em;text-transform:uppercase;padding:1px 5px;border-radius:2px;background:var(--moss);color:var(--paper);font-weight:600;margin-left:5px;vertical-align:1px}
+  .from-door-pill.near{background:var(--gold)}
+  .from-door-pill.drive{background:#9a8d75}
+  .legend-dist{color:#9a8d75;font-size:10px;margin-left:3px}
+  .map-legend .legend-item{flex-wrap:wrap}
+
+  /* Operator-advertised on-property trails block */
+  .operator-trails{margin-top:10px;padding:12px 14px;background:#f7f2e6;border:1px dashed var(--line);border-radius:4px;font-size:12.5px}
+  .operator-trails h4{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:#675a45;margin-bottom:6px;font-weight:600}
+  .operator-trails ul{list-style:none;padding:0}
+  .operator-trails li{padding:3px 0;color:#2c2820;line-height:1.45}
+  .operator-trails li::before{content:'●  ';color:var(--gold);font-size:9px;vertical-align:2px}
+  .operator-trails .op-source{font-family:var(--mono);font-size:10px;color:#9a8d75;margin-top:6px;letter-spacing:.02em}
+  .operator-trails .op-claim{font-style:italic;color:#675a45;font-size:11.5px}
+
+  /* Verify-accessibility warning (Eagles Range) */
+  .access-warning{margin-top:10px;padding:11px 14px;background:#f5d5c5;border:1px solid #c8856a;border-radius:4px;font-size:12.5px;color:#7a3a22;line-height:1.5}
+  .access-warning strong{color:#5e2c19;font-weight:700}
+
   /* Distances pills */
   .dist-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:10px;font-family:var(--mono);font-size:11px}
   .dist-cell{display:flex;justify-content:space-between;padding:6px 10px;background:var(--paper-warm);border:1px solid var(--line-soft);border-radius:3px}
@@ -221,8 +249,8 @@
   <div class="mast-row">
     <div>
       <div class="mast-meta">WC · The Crossing · 28–30 Aug 2026 · Project Lead Sam</div>
-      <h1 class="mast-title">Snowies accommodation <span class="em">shortlist · v2</span></h1>
-      <div class="mast-sub">Nine candidates audited against the 7 criteria · consistent template per property · photos, terrain map, hike list, distances, amenities, scorecard, action. Navigate with <span class="kbd">←</span> <span class="kbd">→</span> or click dots.</div>
+      <h1 class="mast-title">Snowies accommodation <span class="em">shortlist · v4</span></h1>
+      <div class="mast-sub">Nine candidates audited against the 7 criteria + spatial trail audit (haversine distance from each property to every OSM trail point) + operator-advertised on-property trail data. Each map shows OSM-tagged trail routes; banner above declares whether they actually start at the door or require a drive. Navigate with <span class="kbd">←</span> <span class="kbd">→</span> or click dots.</div>
     </div>
     <div class="mast-meta">10 slides · 9 properties + verdict</div>
   </div>
@@ -305,6 +333,7 @@
             <tr><td><div class="hike-name"><a href="https://www.nationalparks.nsw.gov.au/things-to-do/walking-tracks/yarrangobilly-river-walk" target="_blank">Yarrangobilly River Walk Loop</a></div><div style="font-size:12px;color:#52473a">Links thermal pool, river, Glory Hole carpark</div></td><td>3 km loop · 1.5 hr</td><td>Moderate</td><td><span class="winter-tag ok">Year-round</span></td></tr>
             <tr><td><div class="hike-name"><a href="https://www.nationalparks.nsw.gov.au/things-to-do/walking-tracks/glory-farm-walk" target="_blank">Glory Farm Walk Extension</a></div><div style="font-size:12px;color:#52473a">Henry Harris's historic Glory Hole farm</div></td><td>4.2 km loop</td><td>Easy-mod</td><td><span class="winter-tag ok">Year-round</span></td></tr>
             <tr><td><div class="hike-name">North Glory Cave</div><div style="font-size:12px;color:#52473a">500 m walk + 1.5 hr guided tour</div></td><td>500 m + tour</td><td>Easy</td><td><span class="winter-tag ok">Year-round</span></td></tr>
+            <tr><td><div class="hike-name">Bluff Lookout Walk</div><div style="font-size:12px;color:#52473a">Viewpoint over the Caves House itself — added by NPWS area page (not in OSM)</div></td><td>Short</td><td>Easy</td><td><span class="winter-tag ok">Year-round</span></td></tr>
           </tbody>
         </table>
       </div>
@@ -950,7 +979,7 @@
     <div class="gallery" data-images='["https://www.eaglesrange.com.au/images/large/1303.jpg","https://www.eaglesrange.com.au/images/large/1301.jpg","https://www.eaglesrange.com.au/images/large/1264.jpg","https://www.eaglesrange.com.au/images/large/blog_1333.jpg"]' data-fallback="Eagles Range Homestead · Jindabyne · Main Range views"></div>
     <div class="title-block">
       <div>
-        <div class="badge-row"><span class="badge">4/7 · luxury polish</span><span class="badge eliminate">Brand mismatch</span><span class="badge">Jindabyne</span></div>
+        <div class="badge-row"><span class="badge">4/7 · luxury polish</span><span class="badge eliminate">Brand mismatch</span><span class="badge eliminate">⚠ Verify open</span><span class="badge">Jindabyne</span></div>
         <h2 class="slide-title">Eagles Range Homestead</h2>
         <div class="slide-loc">16 Ponderosa Lane, Jindabyne · Main Range views · 120-acre farm · ~900m<br><a href="https://www.google.com/maps?q=-36.40,148.62" target="_blank">View on Google Maps →</a></div>
       </div>
@@ -960,6 +989,8 @@
       </div>
     </div>
   </div>
+
+  <div class="access-warning"><strong>⚠ Verify before booking.</strong> Operator's own website (<a href="https://www.eaglesrange.com.au/the-farm.html" target="_blank">eaglesrange.com.au/the-farm.html</a>) currently states the property is "not open to the public" (surfaced 2026-05-25 audit). May be temporary (renovation / change in ownership / seasonal) — Tripadvisor reviews are recent so the operator is still active. <strong>Phone 1300 003 447 to confirm bookings are being taken for 28–30 Aug 2026 before committing budget or travel.</strong></div>
 
   <div class="stats">
     <div class="stat"><div class="stat-label">Sleeps</div><div class="stat-val">12</div><div class="stat-sub">5 BR · ensuite each</div></div>
@@ -1350,6 +1381,139 @@
   /* High-contrast palette tuned for terrain tiles (warm earth + bright trail accents) */
   const TRAIL_COLORS = ['#d35400','#2980b9','#27ae60','#8e44ad','#c0392b','#16a085','#f39c12','#34495e','#e84393'];
 
+  /* TRAIL AUDIT — distances computed by haversine from property coords to nearest OSM polyline point.
+     "FROM DOOR" = nearest point within 500m. "NEAR" = within 1km. "DRIVE" = beyond 1km. */
+  const TRAIL_AUDIT = {
+    "Yarrangobilly": {
+      "Thermal Pool Trail":     {dist: 592,  tier: "near"},
+      "River Walk":             {dist: 496,  tier: "from-door"},
+      "Glory Hole Farm":        {dist: 1035, tier: "drive"},
+      "Castle Walk":            {dist: 443,  tier: "from-door"},
+      "Self Guided Cave Walk":  {dist: 329,  tier: "from-door"},
+      "Jillabenan Cave Walk":   {dist: 452,  tier: "from-door"},
+      "South Glory Cave":       {dist: 320,  tier: "from-door"}
+    },
+    "Pender Lea": {
+      "Bullocks Track":         {dist: 5078, tier: "drive"},
+      "Thredbo Valley Trail":   {dist: 3478, tier: "drive"},
+      "Pallaibo Walking Track": {dist: 10655,tier: "drive"},
+      "Sawpit Track":           {dist: 11568,tier: "drive"},
+      "Thredbo River Track":    {dist: 3478, tier: "drive"}
+    },
+    "Snowy Wilderness": {},
+    "Warreen Chalet": {
+      "Bullocks Track":         {dist: 4594, tier: "drive"},
+      "Thredbo Valley Trail":   {dist: 4330, tier: "drive"},
+      "Pallaibo Walking Track": {dist: 12275,tier: "drive"},
+      "Thredbo River Track":    {dist: 4330, tier: "drive"}
+    },
+    "Narragundah": {
+      "Wollondibby Fire Trail": {dist: 3141, tier: "drive"},
+      "Bullocks Track":         {dist: 6907, tier: "drive"},
+      "Thredbo Valley Trail":   {dist: 3898, tier: "drive"},
+      "Thredbo River Track":    {dist: 3898, tier: "drive"}
+    },
+    "Anglers Reach": {
+      "Tantangara Mountain Walk": {dist: 16764, tier: "drive"}
+    },
+    "Tom Groggin": {
+      "Tom Groggin Track":           {dist: 2181, tier: "drive"},
+      "Davies Plain Track":          {dist: 3672, tier: "drive"},
+      "Bicentennial National Trail": {dist: 382,  tier: "from-door"},
+      "Bientennial National Trail":  {dist: 548,  tier: "near"}
+    },
+    "Eagles Range": {
+      "Waterfall Trail":         {dist: 7505,  tier: "drive"},
+      "Pallaibo Walking Track":  {dist: 4261,  tier: "drive"},
+      "Hatchery Bay Track":      {dist: 1809,  tier: "drive"},
+      "Sawpit Track":            {dist: 6773,  tier: "drive"}
+    },
+    "Bush Grove": {
+      "Pallaibo Walking Track":  {dist: 14000, tier: "drive"},
+      "Waterfall Trail":         {dist: 15000, tier: "drive"}
+    }
+  };
+
+  /* Per-property summary banner — derived from audit + operator research (2026-05-25) */
+  const PROPERTY_TRAIL_STATUS = {
+    "Yarrangobilly": {
+      status: "strong",
+      headline: "6 trails from the door (within 500m)",
+      detail: "South Glory Cave 320m · Self Guided Cave Walk 329m · Castle Walk 443m · Jillabenan 452m · River Walk 496m · Thermal Pool 592m. Plus Bluff lookout walk (operator-listed, not in OSM)."
+    },
+    "Pender Lea": {
+      status: "mixed",
+      headline: "Operator claims Thredbo Valley Track along Thredbo River frontage (linear, 18km)",
+      detail: "OSM places the trail ~3.5km from the cottage's Alpine Way location — but the property reaches the river. Drive to Bullocks Flat trailhead for direct OSM access (~5km). No on-property marked tracks."
+    },
+    "Snowy Wilderness": {
+      status: "unknown",
+      headline: "Walker access unclear — operator markets HORSE trails, not walking trails",
+      detail: "7,500 acres; 0.3km to KNP boundary but no OSM-tagged trail in that section. Phone +61 2 8935 6449 to verify walker accessibility before booking."
+    },
+    "Warreen Chalet": {
+      status: "drive",
+      headline: "No from-door trails (operator or OSM)",
+      detail: "Closest OSM trail (Wollondibby Fire Trail) is 2.8km drive. Drive 5min to Bullocks Flat for direct trail access. Property markets 'secluded bushland site' but no advertised walks."
+    },
+    "Narragundah": {
+      status: "mixed",
+      headline: "100 acres of open snow-gum roaming + Wollondibby Creek through property — no marked tracks",
+      detail: "Listing copy: 'walking around the 100 acre property you're guaranteed to come across kangaroos and deer'. Nearest OSM-tagged trail is 3.1km. Drive ~10min to Bullocks Flat for direct trail access."
+    },
+    "Anglers Reach": {
+      status: "mixed",
+      headline: "Operator-claimed 5km fire trail at back + lake foreshore (walk over the road)",
+      detail: "Fire trail destination unnamed in listing — likely connects to Old Kiandra Road / Three Mile Dam network. Nearest OSM trail is 16.8km (Tantangara). Selwyn snowshoe network 35km drive."
+    },
+    "Tom Groggin": {
+      status: "strong",
+      headline: "1 trail from the door — Bicentennial National Trail starts here (382m)",
+      detail: "Tom Groggin → Geehi section is 21km one-way and drops to the river flats opposite the station. Plus Swampy Plain River shallow-water walking + 5km Upper Murray frontage. Tom Groggin Track itself is 2.2km drive."
+    },
+    "Eagles Range": {
+      status: "drive",
+      headline: "No advertised on-property trails · operator says property 'currently not open to public'",
+      detail: "Nearest OSM trail is Hatchery Bay Track 1.8km (Lake Jindabyne). Drive 15-20km to Sawpit Creek for Waterfall + Pallaibo trailheads. CALL TO CONFIRM CURRENT OPERATING STATUS."
+    },
+    "Bush Grove": {
+      status: "mixed",
+      headline: "Operator markets private 4WD descent to Snowy River sandy beach (walkable)",
+      detail: "100 acres open bushland · ridge above the Snowy River · no other named tracks. Nearest OSM-tagged trail is 11km drive."
+    },
+    "Compare + verdict": null
+  };
+
+  /* OPERATOR-ADVERTISED on-property trails (claimed by property operator, not OSM-verified).
+     Surface these alongside OSM data so the comparison is honest. */
+  const OPERATOR_TRAILS = {
+    "Yarrangobilly": [
+      {name: "Bluff Lookout Walk", note: "viewpoint over Caves House — operator-listed (not in OSM)", src: "NPWS"}
+    ],
+    "Pender Lea": [
+      {name: "Thredbo River frontage (on-property)", note: "deep pools + running rapids on the property; fishing/walking access from cottage", src: "penderlea.com.au"},
+      {name: "Thredbo Valley Track linear access via property", note: "the 18km riverside multi-use track runs along the river through the property's lower boundary", src: "penderlea.com.au + NPWS"}
+    ],
+    "Snowy Wilderness": [
+      {name: "Horse-riding trails (2 hr to 7-day rides)", note: "wildflower meadows, snow gum forests, ridgelines, mountain streams — walker access not advertised", src: "snowywilderness.com.au"}
+    ],
+    "Narragundah": [
+      {name: "100 acres of open snow-gum bushland", note: "unmarked roaming · kangaroos, deer, echidnas; Wollondibby Creek runs through property", src: "Stayz listing"}
+    ],
+    "Anglers Reach": [
+      {name: "~5km bush fire trail off the back", note: "destination unnamed in listing copy; likely connects to Old Kiandra Road network", src: "Stayz listing"},
+      {name: "Lake Eucumbene foreshore access", note: "walk over the road · boat ramp at end of street", src: "Stayz listing"}
+    ],
+    "Tom Groggin": [
+      {name: "Swampy Plain River shallow-water walking", note: "operator markets 'get your Crocs on and do a little river walking along the knee-deep Swampy Plain'", src: "tomgrogginstation.com.au"},
+      {name: "5km Upper Murray frontage", note: "riverbank walking + fishing + kayaking on the station's river frontage", src: "operator + reviews"}
+    ],
+    "Bush Grove": [
+      {name: "Private 4WD descent track to Snowy River sandy beach", note: "explicitly marketed; walkable down the gradient", src: "Stayz listing"},
+      {name: "100 acres of bushland on Snowy River ridge", note: "kangaroos · wallabies · wombats · deer · open roaming", src: "Stayz listing"}
+    ]
+  };
+
   const mapByContainer = new WeakMap();
 
   function initMaps() {
@@ -1448,22 +1612,61 @@
         });
       });
 
-      /* Legend rendering */
+      /* Trail status banner — inserted above the map (inside .map-block, before .map-tabs) */
+      const mapBlock = container.parentElement; // .map-block
+      const statusInfo = PROPERTY_TRAIL_STATUS[propName];
+      if (statusInfo && mapBlock) {
+        const existingBanner = mapBlock.querySelector('.trail-status-banner');
+        if (!existingBanner) {
+          const banner = document.createElement('div');
+          banner.className = 'trail-status-banner status-' + statusInfo.status;
+          const icon = statusInfo.status === 'strong' ? '✓' : statusInfo.status === 'mixed' ? '◐' : statusInfo.status === 'drive' ? '✗' : '?';
+          banner.innerHTML = '<span class="ts-icon">' + icon + '</span><span><strong>' + statusInfo.headline + '</strong><br><span class="ts-detail">' + statusInfo.detail + '</span></span>';
+          mapBlock.insertBefore(banner, mapBlock.firstChild);
+        }
+      }
+
+      /* Legend rendering — with distance + from-door tier badge */
       const legend = container.nextElementSibling;
       if (legend && legend.classList.contains('map-legend')) {
+        const audit = TRAIL_AUDIT[propName] || {};
         let html = '<span class="legend-prop">' + propName + '</span>';
         if (trails.length > 0) {
           trails.forEach((tn, i) => {
             if (TRAILS[tn]) {
               const color = TRAIL_COLORS[i % TRAIL_COLORS.length];
               const displayName = tn.replace(/^Bientennial /, 'Bicentennial ');
-              html += '<span class="legend-item"><span class="legend-swatch" style="background:' + color + '"></span>' + displayName + '</span>';
+              const auditInfo = audit[tn];
+              let distStr = '';
+              let pillStr = '';
+              if (auditInfo) {
+                const distLabel = auditInfo.dist < 1000 ? auditInfo.dist + 'm' : (auditInfo.dist / 1000).toFixed(1) + 'km';
+                distStr = '<span class="legend-dist">· ' + distLabel + '</span>';
+                if (auditInfo.tier === 'from-door') pillStr = '<span class="from-door-pill">from door</span>';
+                else if (auditInfo.tier === 'near') pillStr = '<span class="from-door-pill near">near</span>';
+                else if (auditInfo.tier === 'drive') pillStr = '<span class="from-door-pill drive">drive</span>';
+              }
+              html += '<span class="legend-item"><span class="legend-swatch" style="background:' + color + '"></span>' + displayName + distStr + pillStr + '</span>';
             }
           });
         } else {
-          html += '<span class="legend-note">No OSM-tagged trails immediately adjacent · see Hikes section for drive-to trailheads</span>';
+          html += '<span class="legend-note">No OSM-tagged trails within map view · see operator-claimed trails below</span>';
         }
         legend.innerHTML = html;
+      }
+
+      /* Operator-advertised on-property trails block — appended after the legend */
+      const opTrails = OPERATOR_TRAILS[propName];
+      if (opTrails && opTrails.length > 0 && legend && !legend.parentElement.querySelector('.operator-trails')) {
+        const opBlock = document.createElement('div');
+        opBlock.className = 'operator-trails';
+        let opHtml = '<h4>Operator-advertised on-property walks (not OSM-verified)</h4><ul>';
+        opTrails.forEach(t => {
+          opHtml += '<li><strong>' + t.name + '</strong> — <span class="op-claim">' + t.note + '</span></li>';
+        });
+        opHtml += '</ul><div class="op-source">Sources: ' + opTrails.map(t => t.src).filter((v,i,a) => a.indexOf(v) === i).join(' · ') + '</div>';
+        opBlock.innerHTML = opHtml;
+        legend.parentElement.insertBefore(opBlock, legend.nextSibling);
       }
 
       mapByContainer.set(container, map);
