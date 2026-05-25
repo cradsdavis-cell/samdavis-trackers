@@ -1,0 +1,160 @@
+﻿name|town|state|elevation_m|sleeps_max|bedrooms|listing_url|rate_range_aud_per_nt|heating|register_guess|source_platform|refine1_pass|refine2_pass|refine3_pass|final_score|rank
+Pender Lea Chalets - The Cottage|Crackenback|NSW|1200|13|5|http://www.penderlea.com.au/the-cottage/|550-750|wood|family-lodge|operator-direct|Y|Y|Y|5.00|
+Pender Lea Chalets - The Homestead|Crackenback|NSW|1200|10|4|http://www.penderlea.com.au/the-homestead/|500-700|wood|family-lodge|operator-direct|Y|Y|N|sleeps_10_11_without_register_offset|
+Pender Lea Chalets - The Stables|Crackenback|NSW|1200|6|3|http://www.penderlea.com.au/the-stables/|350-500|wood|family-lodge|operator-direct|N|||sleeps_lt_8|
+Lake Crackenback Resort - 3BR Apartment|Crackenback|NSW|1100|8|3|https://www.lakecrackenback.com.au|450-650|mixed|hotel|operator-direct|N|||hotel_register|
+Lake Crackenback Resort - 4BR Chalet|Crackenback|NSW|1100|10|4|https://www.lakecrackenback.com.au|650-950|mixed|boutique-chalet|operator-direct|Y|Y|N|sleeps_10_11_without_register_offset|
+Snowgums Crackenback Retreat|Crackenback|NSW|1150|12|5|verify|verify|wood|boutique-chalet|stayz|Y|Y|Y|4.00|
+Alpine Way Cottage|Crackenback|NSW|1180|6|3|verify|350-500|wood|family-lodge|stayz|N|||sleeps_lt_8|
+The Quarters at Boloco Station|Crackenback|NSW|1200|14|6|verify|verify|wood|working-farm|operator-direct|Y|Y|Y|5.50|2
+Boloco Station Homestead|Crackenback|NSW|1200|10|4|verify|verify|wood|working-farm|operator-direct|Y|Y|Y|5.00|
+Crackenback Farm|Crackenback|NSW|1150|12|5|verify|verify|mixed|working-farm|operator-direct|Y|Y|Y|5.00|
+Bullocks Flat Lodge|Crackenback|NSW|1130|16|6|verify|verify|wood|family-lodge|stayz|Y|Y|Y|4.75|
+Wilderness Valley Eco Retreat|Crackenback|NSW|1200|10|4|verify|verify|wood|boutique-chalet|stayz|Y|Y|N|sleeps_10_11_without_register_offset|
+Alpine Way Chalet|Crackenback|NSW|1180|8|3|verify|verify|wood|boutique-chalet|airbnb|Y|Y|N|sleeps_lt_10_strict|
+Narragundah Log Cabin|Crackenback|NSW|1100|9|3|https://www.stayz.com.au/holiday-rental/p7600640|550-700|underfloor|family-lodge|stayz|Y|Y|N|sleeps_lt_10_strict|
+Banjo Paterson Inn|Jindabyne|NSW|930|60|30|https://banjopatersoninn.com.au|140-220|electric|hotel|operator-direct|N|||hotel_register|
+Station Resort Jindabyne|East Jindabyne|NSW|930|400|150|https://stationresort.com.au|160-280|mixed|hotel|operator-direct|N|||hotel_register|
+Lake Jindabyne Hotel|Jindabyne|NSW|930|80|40|https://lakejindabynehotel.com.au|150-250|electric|hotel|operator-direct|N|||hotel_register|
+Snowy Mountains Resort and Function Centre|Jindabyne|NSW|930|120|60|verify|140-220|electric|hotel|operator-direct|N|||hotel_register|
+Aspect Apartments Jindabyne|Jindabyne|NSW|930|6|2|verify|250-400|electric|apartment|stayz|N|||sleeps_lt_8|
+Snow Stream Apartments|Jindabyne|NSW|930|8|3|verify|300-500|electric|apartment|stayz|N|||apartment_not_single_bldg|
+Quay West Jindabyne|Jindabyne|NSW|930|10|4|verify|350-550|electric|apartment|stayz|N|||apartment_not_single_bldg|
+Snowy Resort 4BR Lodge|Jindabyne|NSW|930|12|4|verify|450-700|mixed|family-lodge|stayz|Y|Y|N|low_elev_without_register_offset|
+Tyrolean Village Chalet|East Jindabyne|NSW|950|10|4|verify|400-600|wood|boutique-chalet|airbnb|Y|Y|N|sleeps_10_11_without_register_offset|
+Tyrolean Lodge|East Jindabyne|NSW|950|14|5|verify|500-750|wood|family-lodge|stayz|Y|Y|N|low_elev_without_register_offset|
+Jindabyne Lakeview House|Jindabyne|NSW|930|12|5|verify|450-700|mixed|family-lodge|airbnb|Y|Y|N|low_elev_without_register_offset|
+Kosciuszko Tourist Park|Jindabyne|NSW|930|8|2|https://kosciuszkotouristpark.com.au|150-250|electric|family-lodge|operator-direct|Y|N||park_or_village_not_single_bldg|
+Discovery Parks Jindabyne|Jindabyne|NSW|930|6|2|https://discoveryholidayparks.com.au|180-300|electric|family-lodge|operator-direct|N|||sleeps_lt_8|
+Snowy Mountains Backpackers|Jindabyne|NSW|930|40|10|https://snowybackpackers.com.au|40-80|electric|hostel|operator-direct|N|||hostel_register|
+Jindy Inn|Jindabyne|NSW|930|30|15|verify|130-180|electric|hotel|operator-direct|N|||hotel_register|
+Rydges Horizons Snowy Mountains|East Jindabyne|NSW|950|80|40|https://rydges.com|180-320|electric|hotel|operator-direct|N|||hotel_register|
+Cedarwood Apartments|Jindabyne|NSW|930|8|3|verify|verify|electric|apartment|stayz|N|||apartment_not_single_bldg|
+Bush Grove on Snowy River|Jindabyne|NSW|700|3|1|https://www.stayz.com.au/holiday-rental/p9151206|verify|wood|boutique-chalet|stayz|N|||sleeps_lt_8|
+Bungarra Alpine Centre|Jindabyne|NSW|920|200|multi|https://snowymountainsaccommodation.au/|verify|reverse-cycle|school-camp|snowy-mtns-acc|N|||school_camp_register|
+Troldhaugen Lodge|Jindabyne|NSW|920|16|8|https://snowymountainsaccommodation.au/|verify|reverse-cycle|boutique-chalet|snowy-mtns-acc|Y|Y|N|low_elev_without_register_offset|
+Whispering Pines 4|Jindabyne|NSW|920|22|7|https://snowymountainsaccommodation.au/|verify|reverse-cycle|family-lodge|snowy-mtns-acc|Y|Y|N|low_elev_without_register_offset|
+Pinecone Lodge|Jindabyne|NSW|920|10|4|https://snowymountainsaccommodation.au/|verify|reverse-cycle|family-lodge|snowy-mtns-acc|Y|Y|N|sleeps_10_11_without_register_offset|
+Snowy Valley Resort|Jindabyne|NSW|920|verify|multi|https://snowyvalleyresort.com.au/|verify|reverse-cycle|hotel|operator-direct|N|||day_use_only_or_no_sleeps_data|
+Creel Bay Cottage 1|Waste Point Jindabyne|NSW|920|6|3|https://www.nationalparks.nsw.gov.au/camping-and-accommodation/accommodation/creel-bay-cottages|320-450|reverse-cycle|heritage|npws|N|||sleeps_lt_8|
+Creel Bay Cottage 2|Waste Point Jindabyne|NSW|920|6|3|https://www.nationalparks.nsw.gov.au/camping-and-accommodation/accommodation/creel-bay-cottages|320-450|reverse-cycle|heritage|npws|N|||sleeps_lt_8|
+Creel Lodge|Waste Point Jindabyne|NSW|920|12|5|https://www.nationalparks.nsw.gov.au/camping-and-accommodation/accommodation/creel-lodge|550-800|reverse-cycle|heritage|npws|Y|Y|Y|5.00|
+Eagles Range Homestead|Jindabyne|NSW|900|12|5|https://www.eaglesrange.com.au|900-1400|gas|luxury-chalet|operator-direct|Y|N||luxury_chalet_register|
+The Denman Hotel|Thredbo|NSW|1365|60|30|https://thedenman.com.au|350-650|electric|hotel|operator-direct|N|||hotel_register|
+Thredbo Alpine Hotel|Thredbo|NSW|1365|100|50|https://thredbo.com.au|300-550|electric|hotel|operator-direct|N|||hotel_register|
+River Inn Thredbo|Thredbo|NSW|1365|40|20|https://riverinn.com.au|250-450|electric|hotel|operator-direct|N|||hotel_register|
+Lantern Apartments Thredbo|Thredbo|NSW|1365|8|3|verify|400-700|electric|apartment|stayz|N|||apartment_not_single_bldg|
+Squatters Run Thredbo|Thredbo|NSW|1365|10|4|verify|verify|electric|apartment|stayz|N|||apartment_not_single_bldg|
+Snowgoose Apartments|Thredbo|NSW|1365|6|2|verify|verify|electric|apartment|stayz|N|||sleeps_lt_8|
+Candlelight Lodge|Thredbo|NSW|1365|14|6|verify|verify|wood|ski-club|operator-direct|Y|N||ski_club_register_off_brand|
+House of Ullr|Thredbo|NSW|1365|20|8|verify|verify|wood|ski-club|operator-direct|Y|N||ski_club_register_off_brand|
+Bursill Lodge|Thredbo|NSW|1365|16|7|verify|verify|wood|ski-club|operator-direct|Y|N||ski_club_register_off_brand|
+Thredbo Chalet|Thredbo|NSW|1365|12|5|verify|800-1500|wood|luxury-chalet|stayz|Y|N||luxury_chalet_register|
+Black Bear Inn|Thredbo|NSW|1365|24|12|verify|verify|wood|ski-club|operator-direct|Y|N||ski_club_register_off_brand|
+YHA Thredbo|Thredbo|NSW|1365|48|20|https://www.yha.com.au/hostels/nsw/snowy-mountains/thredbo/group-accommodation/|verify-group-rate|electric|hostel|yha|N|||hostel_register|
+Boali Lodge Thredbo|Thredbo|NSW|1365|36|14|https://boali.com.au/|verify-catered|hydronic|family-lodge|operator-direct|Y|N||commercial_scale_resort|
+Schuss Alpine Club Thredbo|Thredbo|NSW|1365|25|10|https://www.schuss.com.au/thredbo/|verify|hydronic|ski-club|schuss|Y|N||ski_club_register_off_brand|
+Perisher Manor Hotel|Perisher Valley|NSW|1720|60|30|https://perishermanor.com.au|400-700|electric|hotel|operator-direct|N|||hotel_register|
+The Lodge Perisher|Perisher Valley|NSW|1720|80|40|verify|450-800|electric|hotel|operator-direct|N|||hotel_register|
+Marritz Hotel|Perisher Valley|NSW|1720|50|25|verify|400-700|electric|hotel|operator-direct|N|||hotel_register|
+Perisher Valley Hotel|Perisher Valley|NSW|1720|40|20|verify|450-800|electric|hotel|operator-direct|N|||hotel_register|
+Smiggins Hotel|Smiggin Holes|NSW|1680|60|30|verify|350-650|electric|hotel|operator-direct|N|||hotel_register|
+Snow Ski Apartments Smiggins|Smiggin Holes|NSW|1680|8|3|verify|verify|electric|apartment|stayz|N|||apartment_not_single_bldg|
+Karbeethong Lodge|Perisher Valley|NSW|1720|20|10|verify|verify|wood|ski-club|operator-direct|N|||skitube_only_winter_access|
+Kookaburra Ski Club|Perisher Valley|NSW|1720|24|12|verify|verify|wood|ski-club|operator-direct|N|||skitube_only_winter_access|
+Telemark Ski Club|Perisher Valley|NSW|1720|30|14|verify|verify|wood|ski-club|operator-direct|N|||skitube_only_winter_access|
+Guthega Inn|Guthega|NSW|1640|40|20|https://guthegainn.com.au|300-500|wood|family-lodge|operator-direct|Y|N||commercial_scale_resort|
+Snow Goose Hotel Guthega|Guthega|NSW|1640|30|15|verify|verify|wood|family-lodge|operator-direct|Y|N||commercial_scale_resort|
+Eiger Chalet Smiggins|Smiggin Holes|NSW|1680|24|10|verify|verify|wood|family-lodge|operator-direct|N|||skitube_only_winter_access|
+Alpine Resort Apartments|Adaminaby|NSW|1017|6|2|verify|verify|electric|apartment|stayz|N|||sleeps_lt_8|
+Snow Goose Hotel Adaminaby|Adaminaby|NSW|1017|30|15|verify|140-220|electric|hotel|operator-direct|N|||hotel_register|
+Reynella Rides Country Stay|Adaminaby|NSW|1180|30|15|https://reynellarides.com.au|180-280|wood|working-farm|operator-direct|Y|Y|Y|5.00|
+Reynella Coombe Homestead|Adaminaby|NSW|1017|14|10|https://reynellarides.com.au|130-180|wood|working-farm|operator-direct|Y|Y|Y|5.50|4
+Snowy Mountains Alpine Cottages|Old Adaminaby|NSW|1010|12|4|https://www.selwyncentre.com/accommodation/58/|280-450|reverse-cycle|family-lodge|selwyn-centre|Y|Y|N|marginal_elev_without_register_offset|
+The Old Adaminaby Holiday Park|Old Adaminaby|NSW|1180|8|2|verify|150-250|electric|family-lodge|operator-direct|Y|N||park_or_village_not_single_bldg|
+Lake Eucumbene Cottages|Anglers Reach|NSW|1180|10|4|verify|350-550|wood|family-lodge|stayz|Y|Y|N|sleeps_10_11_without_register_offset|
+Anglers Reach Lakeside Resort|Anglers Reach|NSW|1180|40|20|verify|180-300|electric|family-lodge|operator-direct|Y|N||commercial_scale_resort|
+Buckenderra Holiday Village|Buckenderra|NSW|1180|6|2|https://buckenderra.com.au|150-250|electric|family-lodge|operator-direct|N|||sleeps_lt_8|
+Rainbow Pines Tourist Park|Old Adaminaby|NSW|1180|8|2|verify|160-260|electric|family-lodge|operator-direct|Y|N||park_or_village_not_single_bldg|
+Eucumbene Lakeside Cottages|Old Adaminaby|NSW|1180|8|3|verify|verify|wood|family-lodge|stayz|Y|Y|N|sleeps_lt_10_strict|
+Anglers Reach Scandi Cabin|Anglers Reach|NSW|1180|6|2|https://www.stayz.com.au/holiday-rental/p9024567|verify|wood|boutique-chalet|stayz|N|||sleeps_lt_8|
+Adaminaby Farmstay|Adaminaby|NSW|1100|12|5|verify|verify|wood|working-farm|airbnb|Y|Y|Y|4.00|
+Bolaro Station|Adaminaby|NSW|1100|14|6|verify|verify|wood|working-farm|operator-direct|Y|Y|Y|3.50|
+Selwyn Snowfields Lodge|Cabramurra|NSW|1450|20|10|verify|verify|wood|family-lodge|operator-direct|N|||cabramurra_no_public_lodgings|
+Snowy Wilderness Resort|Ingebirah|NSW|1100|40|15|https://snowywilderness.com.au|450-800|wood|wedding-venue|operator-direct|Y|N||wedding_venue_register|
+Berridale Inn|Berridale|NSW|860|24|12|verify|140-220|electric|hotel|operator-direct|N|||hotel_register|
+The Stockman's Rest|Berridale|NSW|860|12|5|verify|350-550|wood|working-farm|stayz|Y|Y|N|low_elev_workingfarm_no_named_remoteness|
+Mountain View Berridale|Berridale|NSW|860|10|4|verify|300-500|wood|family-lodge|airbnb|Y|Y|N|sleeps_10_11_without_register_offset|
+Dalgety Farmhouse|Dalgety|NSW|825|12|5|verify|verify|wood|working-farm|stayz|Y|Y|N|low_elev_workingfarm_no_named_remoteness|
+Beloka Station|Beloka|NSW|1000|14|6|verify|verify|wood|working-farm|operator-direct|Y|Y|Y|3.50|
+Buckleys Crossing Hotel|Dalgety|NSW|825|20|10|verify|verify|wood|hotel|operator-direct|N|||hotel_register|
+Murray 1 Holiday Resort|Khancoban|NSW|340|40|20|verify|140-220|electric|family-lodge|operator-direct|Y|N||commercial_scale_resort|
+Khancoban Lakeside Caravan Park|Khancoban|NSW|340|8|2|verify|130-200|electric|family-lodge|operator-direct|Y|N||park_or_village_not_single_bldg|
+Alpine Inn Khancoban|Khancoban|NSW|340|24|12|verify|140-220|electric|hotel|operator-direct|N|||hotel_register|
+Pickled Sisters Cottage|Tumbarumba|NSW|650|6|3|verify|250-400|wood|family-lodge|stayz|N|||sleeps_lt_8|
+Tumbarumba Motel|Tumbarumba|NSW|650|30|15|verify|130-200|electric|hotel|operator-direct|N|||hotel_register|
+Nest Cottages Tumbarumba|Tumbarumba|NSW|650|8|3|verify|verify|wood|boutique-chalet|stayz|Y|Y|N|sleeps_lt_10_strict|
+Tooma River Country Estate|Tooma|NSW|500|12|5|verify|verify|wood|working-farm|operator-direct|Y|Y|N|low_elev_workingfarm_no_named_remoteness|
+Mannus Lake Cottages|Tooma|NSW|500|8|3|verify|verify|wood|family-lodge|stayz|Y|Y|N|sleeps_lt_10_strict|
+Tom Groggin Station|Khancoban|NSW|540|12|6|https://www.tomgrogginstation.com.au|verify|wood|working-farm|operator-direct|Y|Y|Y|5.50|3
+Alpine Hotel Cooma|Cooma|NSW|800|50|25|https://alpinehotelcooma.com.au|140-220|electric|hotel|operator-direct|N|||hotel_register|
+Marlborough Motor Inn|Cooma|NSW|800|30|15|verify|130-200|electric|hotel|operator-direct|N|||hotel_register|
+Bunkhouse Motel Cooma|Cooma|NSW|800|24|12|verify|120-180|electric|hotel|operator-direct|N|||hotel_register|
+Cooma Motor Lodge|Cooma|NSW|800|30|15|verify|130-200|electric|hotel|operator-direct|N|||hotel_register|
+Cooma Country Comfort|Cooma|NSW|800|40|20|verify|140-220|electric|hotel|operator-direct|N|||hotel_register|
+Numeralla Farmstay|Numeralla|NSW|900|12|5|verify|verify|wood|working-farm|stayz|Y|Y|N|low_elev_workingfarm_no_named_remoteness|
+Bunyan Country Retreat|Bunyan|NSW|850|10|4|verify|verify|wood|family-lodge|airbnb|Y|Y|N|sleeps_10_11_without_register_offset|
+Royalla Homestead|Cooma|NSW|800|14|6|verify|verify|wood|working-farm|stayz|Y|Y|N|low_elev_workingfarm_no_named_remoteness|
+Yarrangobilly Caves House East Wing|Yarrangobilly|NSW|1100|14|6|https://www.nationalparks.nsw.gov.au/camping-and-accommodation/accommodation/yarrangobilly-caves-house-wings|650-900|wood|heritage|npws|Y|Y|Y|6.00|1
+Yarrangobilly Caves House West Wing|Yarrangobilly|NSW|1100|8|3|https://www.nationalparks.nsw.gov.au/camping-and-accommodation/accommodation/yarrangobilly-caves-house-wings|450-650|wood|heritage|npws|Y|Y|N|sleeps_lt_10_strict|
+Yarrangobilly Caves House Guest Rooms|Yarrangobilly|NSW|1100|22|9|https://www.nationalparks.nsw.gov.au/camping-and-accommodation/accommodation/yarrangobilly-caves-house|verify|wood|heritage|npws|Y|Y|Y|5.75|
+Yarrangobilly Trickett Homestead|Yarrangobilly|NSW|1100|10|4|https://nationalparks.nsw.gov.au|300-500|wood|heritage|npws|Y|Y|Y|5.50|
+Currango Homestead|Currango|NSW|1290|18|6|https://www.nationalparks.nsw.gov.au/camping-and-accommodation/accommodation/currango-homestead|350-550|wood|heritage|npws|N|||knp_north_road_closed_jun_oct|
+Currango Daffodil Cottage|Currango|NSW|1290|6|2|https://www.nationalparks.nsw.gov.au/camping-and-accommodation/accommodation/currango-homestead|220-300|wood|heritage|npws|N|||sleeps_lt_8|
+Currango Pollocks Cottage|Currango|NSW|1290|8|3|https://nationalparks.nsw.gov.au|200-320|wood|heritage|npws|N|||knp_north_road_closed_jun_oct|
+The Pines Cottage Currango|Currango|NSW|1290|4|1|https://www.nationalparks.nsw.gov.au/camping-and-accommodation/accommodation/currango-homestead|180-260|wood|heritage|npws|N|||sleeps_lt_8|
+Cooleman Homestead|Long Plain|NSW|1300|10|4|https://nationalparks.nsw.gov.au|250-400|wood|heritage|npws|N|||knp_north_road_closed_jun_oct|
+Old Currango Hut|Currango|NSW|1290|6|1|https://khuts.org|verify|wood|alpine-hut|khuts|N|||sleeps_lt_8|
+Wolgal Lodge|Adaminaby|NSW|1010|10|4|https://khuts.org|verify|wood|alpine-hut|khuts|Y|Y|N|sleeps_10_11_without_register_offset|
+Round Mountain Hut|Round Mountain KNP|NSW|1660|6|0|https://khuts.org|emergency-only|wood|alpine-hut|khuts|N|||sleeps_lt_8|
+Wheelers Hut|Long Plain|NSW|1200|6|0|https://khuts.org|emergency-only|wood|alpine-hut|khuts|N|||sleeps_lt_8|
+Bradleys Hut|Long Plain|NSW|1230|4|0|https://khuts.org|emergency-only|wood|alpine-hut|khuts|N|||sleeps_lt_8|
+Cesjacks Hut|Currango|NSW|1290|4|0|https://khuts.org|emergency-only|wood|alpine-hut|khuts|N|||sleeps_lt_8|
+Brayshaws Hut|Namadgi|ACT|1100|0|0|https://www.parks.act.gov.au|day-use-only|none|heritage|act-parks|N|||day_use_only_or_no_sleeps_data|
+Westermans Homestead|Namadgi|ACT|1080|0|0|https://www.parks.act.gov.au|day-use-only|none|heritage|act-parks|N|||day_use_only_or_no_sleeps_data|
+Gudgenby Ready-Cut Cottage|Namadgi|ACT|1100|6|2|https://www.parks.act.gov.au|180-260|wood|heritage|act-parks|N|||sleeps_lt_8|
+Orroral Homestead|Namadgi|ACT|970|0|0|https://www.parks.act.gov.au|day-use-only|none|heritage|act-parks|N|||day_use_only_or_no_sleeps_data|
+Talbingo Country Club|Talbingo|NSW|550|24|12|verify|140-220|electric|hotel|operator-direct|N|||hotel_register|
+Talbingo Cottages|Talbingo|NSW|550|8|3|verify|verify|wood|family-lodge|stayz|Y|Y|N|sleeps_lt_10_strict|
+Tantangara Cottage|Tantangara|NSW|1230|6|2|verify|verify|wood|alpine-hut|stayz|N|||sleeps_lt_8|
+Globe Hotel Bombala|Bombala|NSW|750|20|10|verify|130-200|electric|hotel|operator-direct|N|||hotel_register|
+Bombala Bridge Motel|Bombala|NSW|750|30|15|verify|130-200|electric|hotel|operator-direct|N|||hotel_register|
+Delegate Hotel|Delegate|NSW|800|16|8|verify|verify|electric|hotel|operator-direct|N|||hotel_register|
+Platypus Country Retreat|Bombala|NSW|750|12|5|verify|verify|wood|working-farm|stayz|Y|Y|N|low_elev_workingfarm_no_named_remoteness|
+Coolamatong Country Lodge|Bombala|NSW|750|14|6|verify|verify|wood|working-farm|operator-direct|Y|Y|N|low_elev_workingfarm_no_named_remoteness|
+Banjos Chalet|Dinner Plain|VIC|1550|22|7|https://www.alpine-getaways.com/listings/207578|1200-1800|wood|boutique-chalet|alpine-getaways|Y|Y|Y|5.00|5
+Majella|Dinner Plain|VIC|1550|12|5|https://www.alpine-getaways.com|verify|wood|boutique-chalet|alpine-getaways|Y|Y|Y|5.00|
+Alpine Edge|Dinner Plain|VIC|1550|13|4|https://www.alpine-getaways.com|verify|verify|boutique-chalet|alpine-getaways|Y|Y|Y|4.50|
+Tyee Chalet|Dinner Plain|VIC|1550|14|4|https://www.alpine-getaways.com|verify|wood|boutique-chalet|alpine-getaways|Y|Y|Y|5.00|
+360 Degrees Chalet|Dinner Plain|VIC|1570|10|4|https://www.alpine-getaways.com/dinner_plain/properties-location/|600-900|hydronic|boutique-chalet|alpine-getaways|Y|Y|N|sleeps_10_11_without_register_offset|
+Tanglewood Chalet|Dinner Plain|VIC|1570|12|5|https://www.alpine-getaways.com/dinner_plain/accommodation/21932/tanglewood/|750-1100|hydronic|boutique-chalet|alpine-getaways|Y|Y|Y|5.00|
+Barcoo Chalet|Dinner Plain|VIC|1570|10|4|https://www.alpine-getaways.com/listings/207586|600-900|hydronic|boutique-chalet|alpine-getaways|Y|Y|N|sleeps_10_11_without_register_offset|
+Beechworth Twelve on Albert|Dinner Plain|VIC|1570|12|6|https://www.alpine-getaways.com/dinner-plain-rentals/|800-1200|hydronic|boutique-chalet|alpine-getaways|Y|Y|Y|5.00|
+Hay-Shed Chalet|Dinner Plain|VIC|1570|10|4|https://www.alpine-getaways.com/dinner-plain-rentals/|550-850|hydronic|boutique-chalet|alpine-getaways|Y|Y|N|sleeps_10_11_without_register_offset|
+Howmans Chalet|Dinner Plain|VIC|1570|14|6|https://www.alpine-getaways.com/dinner-plain-rentals/|900-1300|hydronic|luxury-chalet|alpine-getaways|Y|N||luxury_chalet_register|
+Cascade Chalet|Dinner Plain|VIC|1570|12|5|https://www.alpine-getaways.com/dinner-plain-rentals/|750-1100|hydronic|boutique-chalet|alpine-getaways|Y|Y|Y|5.00|
+Mt Buller Chalet Hotel|Mt Buller|VIC|1600|200|100|https://www.mtbuller.com.au/winter/plan-your-visit/accommodation/mt-buller-chalet-hotel|verify|hydronic|hotel|operator-direct|N|||hotel_register|
+Mont Blanc Chalet|Mt Buller|VIC|1600|12|5|https://www.mtbulleraccommodation.com/accommodations/lodges/|800-1300|hydronic|boutique-chalet|mtbuller-acc|Y|Y|Y|3.50|
+Schuss Alpine Club Mt Buller|Mt Buller|VIC|1600|36|14|https://www.schuss.com.au/mt-buller/|verify|hydronic|ski-club|schuss|Y|N||ski_club_register_off_brand|
+AAC Falls Creek|Falls Creek|VIC|1640|40|15|https://aacfallscreek.com/summer.html|48-pp-pn|hydronic|ski-club|aac-summer-associate|Y|N||ski_club_register_off_brand|
+Carey Alpine Club Lodge|Falls Creek|VIC|1640|30|8|https://careyalpineclub.com/the-lodge/|verify|hydronic|ski-club|operator-direct|Y|N||ski_club_register_off_brand|
+Alpha Ski Lodge|Falls Creek|VIC|1640|36|14|https://www.fallscreek.com.au/listing/alpha-ski-lodge-falls-creek/|verify|hydronic|ski-club|operator-direct|Y|N||ski_club_register_off_brand|
+Tivoli Ski Club Lodge|Falls Creek|VIC|1640|24|10|https://www.tivoliskiclub.org.au/|verify|hydronic|ski-club|operator-direct|Y|N||ski_club_register_off_brand|
+Eco Villa Mt Beauty|Tawonga South|VIC|330|10|3|https://ecovillamtbeauty.com.au/|650-950|hydronic|luxury-chalet|operator-direct|Y|N||luxury_chalet_register|
+Montanya Mount Beauty|Mount Beauty|VIC|350|8|3|https://www.visitmountbeauty.com.au/plan-your-trip/places-to-stay/|verify|reverse-cycle|family-lodge|hcho|Y|Y|N|sleeps_lt_10_strict|
+Waldheim Cabins|Cradle Mountain|TAS|960|36|8|https://parks.tas.gov.au/where-to-stay|130-180-per-cabin|electric|alpine-hut|parks-tas|N|||tas_geographic_mismatch|
+Wallaces Hut|Bogong High Plains|VIC|1710|0|0|https://www.parks.vic.gov.au/places-to-see/parks/alpine-national-park/things-to-do/historic-huts-in-alpine-national-park|day-use-only|wood|alpine-hut|parks-vic|N|||day_use_only_or_no_sleeps_data|
+Cope Hut|Bogong High Plains|VIC|1830|0|0|https://www.parks.vic.gov.au/places-to-see/parks/alpine-national-park/things-to-do/historic-huts-in-alpine-national-park|day-use-only|wood|alpine-hut|parks-vic|N|||day_use_only_or_no_sleeps_data|
+Edmondsons Hut|Mt Cope|VIC|1700|0|0|https://www.parks.vic.gov.au/places-to-see/parks/alpine-national-park/things-to-do/historic-huts-in-alpine-national-park|day-use-only|wood|alpine-hut|parks-vic|N|||day_use_only_or_no_sleeps_data|
+Craigs Hut|Mt Stirling|VIC|1610|0|0|https://www.parks.vic.gov.au/places-to-see/parks/alpine-national-park/things-to-do/historic-huts-in-alpine-national-park|day-use-only|wood|alpine-hut|parks-vic|N|||day_use_only_or_no_sleeps_data|
+Bluff Hut|Mt Buller|VIC|1500|0|0|https://www.parks.vic.gov.au/places-to-see/parks/alpine-national-park/things-to-do/historic-huts-in-alpine-national-park|day-use-only|wood|alpine-hut|parks-vic|N|||day_use_only_or_no_sleeps_data|

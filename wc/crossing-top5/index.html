@@ -1,0 +1,1311 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>The Crossing — Accommodation Shortlist · Wildly Calm Aug 28–30 2026</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin="" defer></script>
+<script src="snowy-trails.js" defer></script>
+<style>
+  :root{
+    --ink:#0f1419; --paper:#f4f0e8; --paper-soft:#ebe5d8; --paper-warm:#f7f2e6;
+    --line:#cdc4b0; --line-soft:#dcd3bf;
+    --accent:#0E5484; --warm:#a64a2c; --moss:#3d5a3c; --gold:#8a6a1e;
+    --shade:rgba(15,20,25,.06);
+    --hit:#3d5a3c; --miss:#a64a2c; --part:#8a6a1e;
+    --mono:'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    --serif: 'Playfair Display', Georgia, 'Times New Roman', serif;
+    --sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+  body{display:flex;flex-direction:column;min-height:100vh}
+  a{color:var(--accent)}
+
+  /* ============== MASTHEAD ============== */
+  header.masthead{padding:30px 44px 22px;border-bottom:1px solid var(--line);background:rgba(244,240,232,.94);position:sticky;top:0;z-index:50;backdrop-filter:blur(10px)}
+  .mast-row{display:flex;align-items:baseline;justify-content:space-between;gap:24px;flex-wrap:wrap}
+  .mast-title{font-family:var(--serif);font-size:30px;font-weight:600;letter-spacing:-.02em}
+  .mast-title .em{color:var(--warm)}
+  .mast-meta{font-family:var(--mono);font-size:11px;color:#5a5340;letter-spacing:.05em;text-transform:uppercase}
+  .mast-sub{margin-top:5px;color:#52473a;font-size:13.5px;max-width:780px}
+  nav.crit-bar{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;padding-top:12px;border-top:1px dashed var(--line-soft);font-family:var(--mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:#675a45}
+  .crit-bar .crit-pill{padding:3px 9px;border:1px solid var(--line);border-radius:999px;background:var(--paper-soft)}
+
+  main{flex:1;padding:28px 44px 80px}
+
+  /* ============== CONTROLS ============== */
+  .controls{display:flex;align-items:center;gap:18px;justify-content:space-between;margin-bottom:24px;padding:14px 20px;background:var(--paper-warm);border:1px solid var(--line);border-radius:6px}
+  .ctrl-left{display:flex;align-items:center;gap:14px;font-family:var(--mono);font-size:11.5px;color:#675a45;letter-spacing:.04em}
+  .ctrl-right{display:flex;gap:8px}
+  .nav-btn{font-family:var(--mono);font-size:11.5px;background:var(--paper);border:1px solid var(--line);padding:8px 16px;cursor:pointer;letter-spacing:.05em;text-transform:uppercase;color:var(--ink);transition:all .15s;border-radius:3px}
+  .nav-btn:hover:not(:disabled){background:var(--ink);color:var(--paper)}
+  .nav-btn:disabled{opacity:.3;cursor:not-allowed}
+  .dots{display:flex;gap:5px;align-items:center}
+  .dot{width:9px;height:9px;border-radius:50%;background:var(--line);border:none;cursor:pointer;padding:0;transition:all .2s;position:relative}
+  .dot.active{background:var(--accent);transform:scale(1.35)}
+  .dot:hover{background:var(--ink)}
+  .dot.top-pick{background:var(--moss)}
+  .dot.elim{background:var(--warm)}
+
+  /* ============== SLIDE BASE ============== */
+  .slide{display:none;animation:fadein .35s ease-out}
+  .slide.active{display:block}
+  @keyframes fadein{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+  /* ============== HERO ============== */
+  .hero{display:grid;grid-template-columns:1.4fr 1fr;gap:24px;margin-bottom:24px}
+  @media (max-width:1100px){ .hero{grid-template-columns:1fr} }
+
+  /* Photo gallery */
+  .gallery{position:relative;background:#1a1814;border-radius:8px;overflow:hidden;aspect-ratio:16/10;border:1px solid var(--line)}
+  .gallery-img-wrap{position:absolute;inset:0}
+  .gallery-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .4s ease}
+  .gallery-img.active{opacity:1}
+  .gallery-fallback{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;background:linear-gradient(135deg,#3a3429 0%,#1f1b15 100%);color:#cbb78a;text-align:center;padding:30px}
+  .gallery-fallback .icon{font-size:42px;opacity:.5}
+  .gallery-fallback .name{font-family:var(--serif);font-size:22px;color:#e8d9b8}
+  .gallery-fallback .note{font-family:var(--mono);font-size:11px;letter-spacing:.04em;color:#9a8d6f;text-transform:uppercase;max-width:340px;line-height:1.5}
+  .gallery-fallback .link-out{margin-top:8px;color:#e8c878;text-decoration:underline;font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.05em}
+  .gallery-nav{position:absolute;top:50%;transform:translateY(-50%);width:40px;height:40px;background:rgba(15,20,25,.5);border:none;color:white;font-size:22px;cursor:pointer;display:flex;align-items:center;justify-content:center;border-radius:50%;backdrop-filter:blur(6px);transition:background .2s;z-index:3}
+  .gallery-nav:hover{background:rgba(15,20,25,.85)}
+  .gallery-nav.prev{left:12px} .gallery-nav.next{right:12px}
+  .gallery-dots{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);display:flex;gap:6px;z-index:3}
+  .gallery-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.35);border:none;cursor:pointer;padding:0;transition:background .2s}
+  .gallery-dot.active{background:#fff}
+  .gallery-count{position:absolute;top:14px;right:14px;background:rgba(15,20,25,.55);color:#fff;font-family:var(--mono);font-size:10px;padding:5px 9px;border-radius:3px;letter-spacing:.05em;z-index:3;backdrop-filter:blur(6px)}
+
+  /* Title block */
+  .title-block{display:flex;flex-direction:column;justify-content:space-between;gap:14px}
+  .badge-row{display:flex;gap:6px;align-items:center;flex-wrap:wrap;font-family:var(--mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.06em}
+  .badge{padding:3px 9px;border:1px solid var(--line);background:var(--paper-soft);color:#675a45}
+  .badge.top-pick{background:var(--moss);color:var(--paper);border-color:var(--moss)}
+  .badge.eliminate{background:var(--warm);color:var(--paper);border-color:var(--warm)}
+  .badge.sam-list{background:var(--accent);color:var(--paper);border-color:var(--accent)}
+  .badge.second-pick{background:var(--gold);color:var(--paper);border-color:var(--gold)}
+  .slide-title{font-family:var(--serif);font-size:32px;font-weight:600;letter-spacing:-.02em;line-height:1.1;color:var(--ink);margin-top:8px}
+  .slide-loc{font-family:var(--mono);font-size:12px;color:#675a45;margin-top:8px;letter-spacing:.02em;line-height:1.55}
+  .slide-loc a{color:var(--accent);text-decoration:none;border-bottom:1px solid currentColor}
+
+  .scoreboard{display:flex;align-items:center;gap:14px;padding:12px 0;border-top:1px solid var(--line-soft);border-bottom:1px solid var(--line-soft)}
+  .score-num{font-family:var(--serif);font-size:46px;font-weight:600;line-height:1;color:var(--ink)}
+  .score-num .denom{font-size:22px;color:#9a8d75;font-weight:400}
+  .score-label{font-family:var(--mono);font-size:10.5px;letter-spacing:.05em;text-transform:uppercase;color:#675a45;line-height:1.4}
+
+  /* ============== STATS GRID ============== */
+  .stats{display:grid;grid-template-columns:repeat(5,1fr);gap:0;margin:0 0 24px;border:1px solid var(--line);background:var(--paper)}
+  .stat{padding:12px 14px;border-right:1px solid var(--line-soft)}
+  .stat:last-child{border-right:none}
+  .stat-label{font-family:var(--mono);font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;color:#9a8d75;margin-bottom:4px;font-weight:600}
+  .stat-val{font-family:var(--serif);font-size:17px;font-weight:600;color:var(--ink);line-height:1.2}
+  .stat-val .unit{font-size:12px;color:#675a45;font-weight:400;font-family:var(--sans)}
+  .stat-sub{font-family:var(--mono);font-size:10px;color:#675a45;margin-top:3px;letter-spacing:.02em}
+  @media (max-width:900px){ .stats{grid-template-columns:repeat(2,1fr)} .stat{border-bottom:1px solid var(--line-soft)} }
+
+  /* ============== BODY GRID ============== */
+  .body-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:24px;align-items:start}
+  @media (max-width:1000px){ .body-grid{grid-template-columns:1fr} }
+
+  /* Section blocks */
+  .section{margin-bottom:22px}
+  .section-h{font-family:var(--mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:#9a8d75;margin-bottom:10px;font-weight:600;padding-bottom:6px;border-bottom:1px solid var(--line-soft)}
+
+  /* Narrative */
+  .narrative p{margin-bottom:10px;color:#2c2820;max-width:62ch;font-size:14.5px}
+  .narrative strong{color:var(--ink)}
+  .verdict{padding:14px 18px;border-left:3px solid var(--accent);background:var(--shade);font-size:14px;color:#2c2820;margin-top:8px;line-height:1.55}
+  .verdict.eliminate{border-left-color:var(--warm)}
+  .verdict.top-pick{border-left-color:var(--moss)}
+  .verdict.second-pick{border-left-color:var(--gold)}
+
+  /* Map embed */
+  .map-block{background:var(--paper);border:1px solid var(--line);border-radius:6px;overflow:hidden;margin-bottom:14px}
+  .map-tabs{display:flex;background:var(--paper-warm);border-bottom:1px solid var(--line)}
+  .map-tab{flex:1;padding:8px 12px;font-family:var(--mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:#675a45;background:none;border:none;cursor:pointer;border-right:1px solid var(--line-soft);transition:background .15s}
+  .map-tab:last-child{border-right:none}
+  .map-tab.active{background:var(--ink);color:var(--paper)}
+  .map-tab:hover:not(.active){background:var(--paper)}
+  .map-container{width:100%;height:380px;display:block;background:#dde1d6}
+  .map-container.leaflet-container{font-family:var(--sans);font-size:13px}
+  .map-legend{padding:10px 14px;background:var(--paper-warm);border-top:1px solid var(--line-soft);display:flex;flex-wrap:wrap;gap:10px 16px;font-family:var(--mono);font-size:10.5px;color:#2c2820;align-items:center;line-height:1.4}
+  .map-legend .legend-item{display:inline-flex;align-items:center;gap:6px;letter-spacing:.02em}
+  .map-legend .legend-swatch{display:inline-block;width:14px;height:3px;border-radius:1px}
+  .map-legend .legend-note{color:#675a45;font-style:italic;letter-spacing:.02em}
+  .map-legend .legend-prop{display:inline-flex;align-items:center;gap:6px;color:#52473a;padding-right:4px;border-right:1px solid var(--line-soft);margin-right:6px}
+  .map-legend .legend-prop::before{content:'';display:inline-block;width:11px;height:11px;border-radius:50%;background:var(--warm);border:2px solid #fff;box-shadow:0 0 0 1px var(--warm)}
+  .prop-marker{background:transparent!important;border:none!important}
+  .prop-marker .prop-pin{width:22px;height:22px;border-radius:50% 50% 50% 0;background:var(--warm);border:2.5px solid #fff;box-shadow:0 2px 6px rgba(0,0,0,.35);transform:rotate(-45deg);position:relative}
+  .prop-marker .prop-pin::after{content:'';position:absolute;top:50%;left:50%;width:6px;height:6px;background:#fff;border-radius:50%;transform:translate(-50%,-50%)}
+  .leaflet-popup-content{font-family:var(--sans);font-size:13px;line-height:1.5}
+  .leaflet-popup-content strong{color:var(--ink)}
+  .leaflet-popup-content .pop-meta{font-family:var(--mono);font-size:10.5px;color:#675a45;letter-spacing:.04em;text-transform:uppercase;display:block;margin-top:4px}
+  .leaflet-control-attribution{font-size:10px!important}
+
+  /* Trail audit banner + legend pills (v4) */
+  .trail-status-banner{display:flex;align-items:center;gap:14px;padding:11px 14px;border-bottom:1px solid var(--line-soft);font-family:var(--mono);font-size:11px;letter-spacing:.04em;line-height:1.4;flex-wrap:wrap}
+  .trail-status-banner.status-strong{background:#dde6cf;color:#2c4a2b}
+  .trail-status-banner.status-mixed{background:#efe2c4;color:#7a6322}
+  .trail-status-banner.status-drive{background:#f0d6c8;color:#7a3a22}
+  .trail-status-banner.status-unknown{background:var(--paper-warm);color:#52473a}
+  .trail-status-banner .ts-icon{font-size:14px;flex-shrink:0}
+  .trail-status-banner strong{font-weight:600}
+  .trail-status-banner .ts-detail{color:inherit;opacity:.85}
+  .from-door-pill{display:inline-block;font-family:var(--mono);font-size:9px;letter-spacing:.06em;text-transform:uppercase;padding:1px 5px;border-radius:2px;background:var(--moss);color:var(--paper);font-weight:600;margin-left:5px;vertical-align:1px}
+  .from-door-pill.near{background:var(--gold)}
+  .from-door-pill.drive{background:#9a8d75}
+  .legend-dist{color:#9a8d75;font-size:10px;margin-left:3px}
+  .map-legend .legend-item{flex-wrap:wrap}
+
+  /* Operator-advertised on-property trails block */
+  .operator-trails{margin-top:10px;padding:12px 14px;background:#f7f2e6;border:1px dashed var(--line);border-radius:4px;font-size:12.5px}
+  .operator-trails h4{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.06em;color:#675a45;margin-bottom:6px;font-weight:600}
+  .operator-trails ul{list-style:none;padding:0}
+  .operator-trails li{padding:3px 0;color:#2c2820;line-height:1.45}
+  .operator-trails li::before{content:'●  ';color:var(--gold);font-size:9px;vertical-align:2px}
+  .operator-trails .op-source{font-family:var(--mono);font-size:10px;color:#9a8d75;margin-top:6px;letter-spacing:.02em}
+  .operator-trails .op-claim{font-style:italic;color:#675a45;font-size:11.5px}
+
+  /* Verify-accessibility warning (Eagles Range) */
+  .access-warning{margin-top:10px;padding:11px 14px;background:#f5d5c5;border:1px solid #c8856a;border-radius:4px;font-size:12.5px;color:#7a3a22;line-height:1.5}
+  .access-warning strong{color:#5e2c19;font-weight:700}
+
+  /* Distances pills */
+  .dist-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-top:10px;font-family:var(--mono);font-size:11px}
+  .dist-cell{display:flex;justify-content:space-between;padding:6px 10px;background:var(--paper-warm);border:1px solid var(--line-soft);border-radius:3px}
+  .dist-cell .dist-label{color:#675a45}
+  .dist-cell .dist-val{color:var(--ink);font-weight:600}
+
+  /* Hike table */
+  .hike-table{width:100%;border-collapse:collapse;font-size:13px;background:var(--paper)}
+  .hike-table th{font-family:var(--mono);font-size:9.5px;text-transform:uppercase;letter-spacing:.06em;color:#675a45;font-weight:600;padding:8px;border-bottom:2px solid var(--ink);text-align:left;background:var(--paper-warm)}
+  .hike-table td{padding:9px 8px;border-bottom:1px solid var(--line-soft);vertical-align:top;color:#2c2820}
+  .hike-table .hike-name{font-family:var(--serif);font-weight:600;font-size:14px;color:var(--ink);line-height:1.25}
+  .hike-table .hike-name a{color:inherit;text-decoration:none;border-bottom:1px dashed var(--line)}
+  .hike-table .hike-name a:hover{color:var(--accent);border-bottom-color:var(--accent)}
+  .hike-table .winter-tag{font-family:var(--mono);font-size:9.5px;text-transform:uppercase;letter-spacing:.04em;padding:1px 6px;border-radius:2px;margin-left:5px;vertical-align:middle}
+  .winter-tag.snowshoe{background:#cae5e8;color:#1d4f56}
+  .winter-tag.ok{background:#d5e0c9;color:#3d5a3c}
+  .winter-tag.closed{background:#e6c8bc;color:#7a3a22}
+  .winter-tag.summer{background:#e6dcc8;color:#7a6322}
+
+  /* Amenities chips */
+  .amenities{display:flex;flex-wrap:wrap;gap:6px;font-family:var(--mono);font-size:10.5px}
+  .am-chip{padding:4px 10px;background:var(--paper-warm);border:1px solid var(--line-soft);border-radius:3px;color:#2c2820;letter-spacing:.02em}
+  .am-chip.no{color:#a64a2c;background:#f5e8e0;border-color:#e2b5a1;text-decoration:line-through;text-decoration-color:#a64a2c}
+  .am-chip.key{background:var(--moss);color:var(--paper);border-color:var(--moss);font-weight:600}
+
+  /* CRITERIA CARD */
+  .crit-card{background:var(--paper-warm);border:1px solid var(--line);padding:20px;position:sticky;top:160px;border-radius:6px}
+  .crit-card h3{font-family:var(--mono);font-size:10.5px;text-transform:uppercase;letter-spacing:.08em;color:#675a45;margin-bottom:14px;font-weight:600;padding-bottom:9px;border-bottom:1px solid var(--line-soft)}
+  .crit-list{display:flex;flex-direction:column;gap:11px}
+  .crit-row{display:grid;grid-template-columns:28px 1fr;gap:10px;align-items:start}
+  .crit-mark{font-family:var(--mono);font-size:18px;font-weight:600;line-height:1;text-align:center}
+  .crit-mark.hit{color:var(--hit)} .crit-mark.miss{color:var(--miss)} .crit-mark.part{color:var(--part)}
+  .crit-text{font-size:12.5px;color:#2c2820;line-height:1.4}
+  .crit-text strong{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.04em;text-transform:uppercase;color:#675a45;margin-bottom:2px;font-weight:600}
+
+  /* Booking action bar */
+  .action-bar{margin-top:14px;padding-top:14px;border-top:1px solid var(--line-soft);font-family:var(--mono);font-size:11px}
+  .action-bar .ab-row{display:flex;justify-content:space-between;padding:4px 0;color:#52473a}
+  .action-bar .ab-row strong{color:var(--ink);font-weight:600}
+  .action-bar .ab-row a{color:var(--accent);text-decoration:none;border-bottom:1px solid currentColor}
+  .action-bar .call-btn{display:block;text-align:center;margin-top:10px;padding:10px;background:var(--ink);color:var(--paper);text-decoration:none;border-radius:3px;letter-spacing:.06em;text-transform:uppercase;font-weight:600}
+  .action-bar .call-btn:hover{background:var(--accent)}
+
+  /* COMPARE TABLE */
+  .compare-table{width:100%;border-collapse:collapse;font-size:12.5px;background:var(--paper);margin-top:18px}
+  .compare-table th{font-family:var(--mono);font-size:10px;text-transform:uppercase;letter-spacing:.05em;color:#675a45;font-weight:600;padding:9px 7px;border-bottom:2px solid var(--ink);text-align:left;vertical-align:bottom;background:var(--paper-warm)}
+  .compare-table td{padding:9px 7px;border-bottom:1px solid var(--line-soft);vertical-align:top}
+  .compare-table tr:hover td{background:var(--paper-warm)}
+  .compare-table .prop-name{font-family:var(--serif);font-weight:600;font-size:14px;color:var(--ink);line-height:1.2}
+  .compare-table .prop-sub{font-family:var(--mono);font-size:9.5px;color:#9a8d75;text-transform:uppercase;letter-spacing:.04em;margin-top:2px}
+  .compare-table .c-mark{text-align:center;font-family:var(--mono);font-weight:600;font-size:14px}
+  .compare-table .c-mark.hit{color:var(--hit)} .compare-table .c-mark.miss{color:var(--miss)} .compare-table .c-mark.part{color:var(--part)}
+  .compare-table .score-cell{font-family:var(--serif);font-weight:600;font-size:18px;color:var(--ink);text-align:center}
+  .compare-table tr.top-row{background:rgba(61,90,60,.08)}
+  .compare-table tr.elim-row{opacity:.55}
+
+  .recommendation{margin-top:32px;padding:26px;background:var(--paper-warm);border:1px solid var(--line);border-left:4px solid var(--moss);border-radius:6px}
+  .recommendation h3{font-family:var(--serif);font-size:23px;margin-bottom:14px;color:var(--ink)}
+  .recommendation ol{margin-left:22px;color:#2c2820}
+  .recommendation li{margin-bottom:10px;font-size:14.5px}
+  .recommendation strong{color:var(--ink)}
+
+  footer{padding:22px 44px;border-top:1px solid var(--line);font-family:var(--mono);font-size:10.5px;color:#9a8d75;letter-spacing:.04em;text-transform:uppercase;background:var(--paper-soft)}
+  .kbd{font-family:var(--mono);font-size:10px;padding:2px 6px;border:1px solid var(--line);background:var(--paper);border-radius:3px;margin:0 2px}
+
+  /* Per-property accent strip */
+  .accent-strip{height:4px;background:var(--accent);border-radius:6px 6px 0 0;margin-bottom:0}
+  .accent-strip.top{background:var(--moss)}
+  .accent-strip.second{background:var(--gold)}
+  .accent-strip.elim{background:var(--warm)}
+</style>
+</head>
+<body>
+
+<header class="masthead">
+  <div class="mast-row">
+    <div>
+      <div class="mast-meta">WC · The Crossing · 28–30 Aug 2026 · Project Lead Sam</div>
+      <h1 class="mast-title">The Crossing · <span class="em">TOP 5 shortlist</span></h1>
+      <div class="mast-sub">Final 5 from a systematic search of <strong>159 candidates</strong> across NSW Snowy Mountains + VIC alpine + NPWS heritage + specialist agencies. Funnel: 159 → 81 (Stage 1 auto-fail) → 57 (Stage 2 register) → 24 (Stage 3 audit) → <strong>5 (final scored + ranked)</strong>. Full CSV at <a href="snowies-200.csv">snowies-200.csv</a>, sortable view at <a href="wc-crossing-csv-view.html">wc-crossing-csv-view.html</a>. Strategy framework at <code>~/.claude/plans/dazzling-coalescing-meadow.md</code>. Booking deadline urgency: Yarrangobilly NPWS = end-May 2026. Navigate with <span class="kbd">←</span> <span class="kbd">→</span> or click dots.</div>
+    </div>
+    <div class="mast-meta">6 slides · 5 finalists + verdict · ranked + scored</div>
+  </div>
+  <nav class="crit-bar">
+    <span class="crit-pill">1 · Snow in Aug <em style="color:#a64a2c;font-style:normal">(≥1,000 m soft floor)</em></span>
+    <span class="crit-pill">2 · Remote + rustic</span>
+    <span class="crit-pill">3 · Warm + comfortable</span>
+    <span class="crit-pill">4 · Sleeps ≥12</span>
+    <span class="crit-pill">5 · Hike + drive access</span>
+    <span class="crit-pill">6 · Low cost</span>
+    <span class="crit-pill">7 · Water nearby</span>
+  </nav>
+</header>
+
+<main>
+
+<div class="controls">
+  <div class="ctrl-left">
+    <span id="slideCounter">Slide 1 / 10</span>
+    <div class="dots" id="dots"></div>
+  </div>
+  <div class="ctrl-right">
+    <button class="nav-btn" id="prevBtn">← Prev</button>
+    <button class="nav-btn" id="nextBtn">Next →</button>
+  </div>
+</div>
+
+<!-- ====================================================== -->
+<!-- SLIDE 1 — Yarrangobilly Caves House (★ TOP PICK 7/7) -->
+<!-- ====================================================== -->
+<section class="slide active" data-name="Yarrangobilly" data-marker="top">
+  <div class="accent-strip top"></div>
+  <div class="hero">
+    <div class="gallery" data-images='["https://www.nationalparks.nsw.gov.au/-/media/npws/images/parks/kosciuszko-national-park/yarrangobilly-area/yarrangobilly-caves-house-1901wings/yarrangobilly-caves-house-1901-exterior-04.jpg","https://www.nationalparks.nsw.gov.au/-/media/npws/images/parks/kosciuszko-national-park/yarrangobilly-area/yarrangobilly-caves-house-1901wings/yarrangobilly-caves-house-1901-west-wing-01.jpg","https://www.nationalparks.nsw.gov.au/-/media/npws/images/parks/kosciuszko-national-park/yarrangobilly-area/yarrangobilly-caves-house-1901wings/yarrangobilly-caves-house-1901-verandah-02.jpg","https://www.nationalparks.nsw.gov.au/-/media/npws/images/parks/kosciuszko-national-park/yarrangobilly-area/yarrangobilly-caves-house-1901wings/yarrangobilly-caves-house-1901-east-wing-02.jpg","https://www.nationalparks.nsw.gov.au/-/media/npws/images/parks/kosciuszko-national-park/yarrangobilly-area/yarrangobilly-caves-house-1901wings/yarrangobilly-caves-house-1901-west-wing-05.jpg","https://www.nationalparks.nsw.gov.au/-/media/npws/images/parks/kosciuszko-national-park/yarrangobilly-area/yarrangobilly-caves-house-1901wings/yarrangobilly-caves-house-1901-east-wing-04.jpg"]' data-fallback="Yarrangobilly Caves House (1901) · NPWS heritage building"></div>
+    <div class="title-block">
+      <div>
+        <div class="badge-row"><span class="badge top-pick">★ RANK #1 · score 6.0/7</span><span class="badge top-pick">★ Top pick · 7/7 orig criteria</span><span class="badge">KNP heritage 1901</span></div>
+        <h2 class="slide-title">Yarrangobilly Caves House — Heritage Wings</h2>
+        <div class="slide-loc">Yarrangobilly, Kosciuszko NP · 1.5 hr north of Jindabyne · ~1100m elev<br><a href="https://www.google.com/maps?q=-35.723853,148.491586" target="_blank">View on Google Maps →</a></div>
+      </div>
+      <div class="scoreboard">
+        <div class="score-num">7<span class="denom">/7</span></div>
+        <div class="score-label">Only candidate that hits<br>every criterion cleanly</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="stat-label">Sleeps</div><div class="stat-val">~24</div><div class="stat-sub">Both wings exclusive</div></div>
+    <div class="stat"><div class="stat-label">Bed config</div><div class="stat-val">8 BR</div><div class="stat-sub">E: 1K+6S · W: 2(K+S)</div></div>
+    <div class="stat"><div class="stat-label">Heating</div><div class="stat-val">Wood</div><div class="stat-sub">+ gas · thick heritage walls</div></div>
+    <div class="stat"><div class="stat-label">Rate</div><div class="stat-val">~$1k<span class="unit">/nt</span></div><div class="stat-sub">~$90pp · both wings</div></div>
+    <div class="stat"><div class="stat-label">Snow</div><div class="stat-val">Reliable</div><div class="stat-sub">Sheltered valley · chains advised</div></div>
+  </div>
+
+  <div class="body-grid">
+    <div>
+      <div class="section">
+        <div class="section-h">Where it is · interactive terrain map</div>
+        <div class="map-block">
+          <div class="map-tabs"><button class="map-tab active" data-mode="terrain">Terrain</button><button class="map-tab" data-mode="satellite">Satellite</button><button class="map-tab" data-mode="regional">Regional context</button></div>
+          <div class="map-container" data-lat="-35.723853" data-lng="148.491586" data-zoom="14" data-regional-zoom="9"></div><div class="map-legend"></div>
+        </div>
+        <div class="dist-grid">
+          <div class="dist-cell"><span class="dist-label">→ Jindabyne</span><span class="dist-val">1 hr 30 (108 km)</span></div>
+          <div class="dist-cell"><span class="dist-label">→ Adaminaby</span><span class="dist-val">45 min (62 km)</span></div>
+          <div class="dist-cell"><span class="dist-label">→ Thermal pool</span><span class="dist-val">8 min drive</span></div>
+          <div class="dist-cell"><span class="dist-label">→ Caves carpark</span><span class="dist-val">From door</span></div>
+          <div class="dist-cell"><span class="dist-label">Nearest fuel</span><span class="dist-val">Adaminaby</span></div>
+          <div class="dist-cell"><span class="dist-label">Nearest IGA</span><span class="dist-val">Adaminaby</span></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-h">Hikes from the door</div>
+        <table class="hike-table">
+          <thead><tr><th>Hike</th><th>Distance</th><th>Difficulty</th><th>Winter</th></tr></thead>
+          <tbody>
+            <tr><td><div class="hike-name"><a href="https://www.nationalparks.nsw.gov.au/things-to-do/walking-tracks/yarrangobilly-caves-thermal-pool-walk" target="_blank">Thermal Pool Walk</a></div><div style="font-size:12px;color:#52473a">Signature winter experience — 27°C natural pool</div></td><td>1.4 km return · 30 min</td><td>Mod (steep)</td><td><span class="winter-tag ok">Year-round</span></td></tr>
+            <tr><td><div class="hike-name"><a href="https://www.nationalparks.nsw.gov.au/things-to-do/walking-tracks/yarrangobilly-river-walk" target="_blank">Yarrangobilly River Walk Loop</a></div><div style="font-size:12px;color:#52473a">Links thermal pool, river, Glory Hole carpark</div></td><td>3 km loop · 1.5 hr</td><td>Moderate</td><td><span class="winter-tag ok">Year-round</span></td></tr>
+            <tr><td><div class="hike-name"><a href="https://www.nationalparks.nsw.gov.au/things-to-do/walking-tracks/glory-farm-walk" target="_blank">Glory Farm Walk Extension</a></div><div style="font-size:12px;color:#52473a">Henry Harris's historic Glory Hole farm</div></td><td>4.2 km loop</td><td>Easy-mod</td><td><span class="winter-tag ok">Year-round</span></td></tr>
+            <tr><td><div class="hike-name">North Glory Cave</div><div style="font-size:12px;color:#52473a">500 m walk + 1.5 hr guided tour</div></td><td>500 m + tour</td><td>Easy</td><td><span class="winter-tag ok">Year-round</span></td></tr>
+            <tr><td><div class="hike-name">Bluff Lookout Walk</div><div style="font-size:12px;color:#52473a">Viewpoint over the Caves House itself — added by NPWS area page (not in OSM)</div></td><td>Short</td><td>Easy</td><td><span class="winter-tag ok">Year-round</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section">
+        <div class="section-h">Amenities</div>
+        <div class="amenities">
+          <span class="am-chip key">Wood heating</span><span class="am-chip key">Thermal pool</span><span class="am-chip">Full kitchen</span><span class="am-chip">Dishwasher</span><span class="am-chip">Slow cooker</span><span class="am-chip">Bakeware</span><span class="am-chip">Outdoor BBQ</span><span class="am-chip">Dining room</span><span class="am-chip">Lounge</span><span class="am-chip">Verandah</span><span class="am-chip no">No wifi</span><span class="am-chip no">No sauna</span><span class="am-chip no">No pets</span>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-h">Narrative</div>
+        <div class="narrative">
+          <p>A 1917 heritage building inside Kosciuszko NP, run by NSW NPWS. Two wings (East + West) bookable together for exclusive group hire — you get the whole property to yourselves. Gravel access road stays open in winter (chains advised). NOT in the June–October northern-KNP closure zone that kills Currango, Old Currango, and Geehi.</p>
+          <p>The Sat-night plunge ritual is built into the geography: 8-min drive (or 1.4 km walk for the keen) to the <strong>27°C natural thermal pool</strong>, with the Yarrangobilly River next to it. Float in the spring while snow falls; then cold-plunge into the river. Wild → Calm → Integration arc, compressed into one location.</p>
+        </div>
+        <div class="verdict top-pick"><strong>Call this first.</strong> NPWS group bookings are limited and book out for school holidays and long weekends. Late-Aug 2026 is a 3-month window — phone Tumut NPWS today.</div>
+      </div>
+    </div>
+
+    <aside>
+      <div class="crit-card">
+        <h3>Criteria scorecard</h3>
+        <div class="crit-list">
+          <div class="crit-row"><div class="crit-mark hit">✓</div><div class="crit-text"><strong>1 · Snow Aug</strong>Sheltered valley · regular snow late Aug · access road open</div></div>
+          <div class="crit-row"><div class="crit-mark hit">✓</div><div class="crit-text"><strong>2 · Rustic</strong>1901 heritage · inside KNP · no neighbours · sense of place is huge</div></div>
+          <div class="crit-row"><div class="crit-mark hit">✓</div><div class="crit-text"><strong>3 · Warm</strong>Wood + gas heating · heritage thick walls retain heat</div></div>
+          <div class="crit-row"><div class="crit-mark hit">✓</div><div class="crit-text"><strong>4 · ≥12</strong>~24 across both wings · exclusive group hire bookable</div></div>
+          <div class="crit-row"><div class="crit-mark hit">✓</div><div class="crit-text"><strong>5 · Hike + drive</strong>Multiple trails from door · gravel road keeps supply alive</div></div>
+          <div class="crit-row"><div class="crit-mark hit">✓</div><div class="crit-text"><strong>6 · Low cost</strong>~$90pp/nt for 12 across both wings · in band</div></div>
+          <div class="crit-row"><div class="crit-mark hit">✓</div><div class="crit-text"><strong>7 · Water</strong>27°C thermal pool + Yarrangobilly River · 8 min drive · plunge ritual built-in</div></div>
+        </div>
+        <div class="action-bar">
+          <div class="ab-row"><span>Phone</span><strong>1300 072 757</strong></div>
+          <div class="ab-row"><span>Email</span><a href="mailto:npws.bookings@environment.nsw.gov.au">NPWS Bookings</a></div>
+          <div class="ab-row"><span>Check-in</span><strong>2:00 PM</strong></div>
+          <div class="ab-row"><span>Check-out</span><strong>10:00 AM</strong></div>
+          <div class="ab-row"><span>Cancellation</span><strong>30 / 14 day tiers</strong></div>
+          <a href="https://www.nationalparks.nsw.gov.au/camping-and-accommodation/accommodation/yarrangobilly-caves-house-wings" target="_blank" class="call-btn">View NPWS listing →</a>
+        </div>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- ====================================================== -->
+<!-- SLIDE 2 — Pender Lea Cottage (★ SECOND PICK 6.5/7) -->
+<!-- ====================================================== -->
+<section class="slide" data-name="Pender Lea" data-marker="second">
+  <div class="accent-strip second"></div>
+  <div class="hero">
+    <div class="gallery" data-images='[]' data-fallback="Pender Lea — The Cottage · Crackenback · 1056 Alpine Way" data-fallback-link="http://www.penderlea.com.au/the-cottage/"></div>
+    <div class="title-block">
+      <div>
+        <div class="badge-row"><span class="badge second-pick">★ RANK #4 · score 5.0/7</span><span class="badge">Crackenback ~1200m</span><span class="badge">Alpine Way</span><span class="badge">firewood incl</span></div>
+        <h2 class="slide-title">Pender Lea — "The Cottage"</h2>
+        <div class="slide-loc">1056 Alpine Way, Crackenback · 15 min Thredbo · 10 min Skitube · ~1200m<br><a href="https://www.google.com/maps?q=-36.4437,148.4970" target="_blank">View on Google Maps →</a></div>
+      </div>
+      <div class="scoreboard">
+        <div class="score-num">6.5<span class="denom">/7</span></div>
+        <div class="score-label">Built-in firewood + 13 beds<br>= best fit at-capacity</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="stat-label">Sleeps</div><div class="stat-val">13</div><div class="stat-sub">Multiple bedrooms · call</div></div>
+    <div class="stat"><div class="stat-label">Bed config</div><div class="stat-val">Family + add'l</div><div class="stat-sub">K (splits to 2S) + S + bunks</div></div>
+    <div class="stat"><div class="stat-label">Heating</div><div class="stat-val">Open fire</div><div class="stat-sub">Firewood incl · 900mm oven</div></div>
+    <div class="stat"><div class="stat-label">Rate</div><div class="stat-val">~$550-750<span class="unit">/nt</span></div><div class="stat-sub">~$50pp/nt at 13</div></div>
+    <div class="stat"><div class="stat-label">Snow</div><div class="stat-val">Reliable</div><div class="stat-sub">~1200m · late Aug regular</div></div>
+  </div>
+
+  <div class="body-grid">
+    <div>
+      <div class="section">
+        <div class="section-h">Where it is · interactive terrain map</div>
+        <div class="map-block">
+          <div class="map-tabs"><button class="map-tab active" data-mode="terrain">Terrain</button><button class="map-tab" data-mode="satellite">Satellite</button><button class="map-tab" data-mode="regional">Regional context</button></div>
+          <div class="map-container" data-lat="-36.4437" data-lng="148.4970" data-zoom="14" data-regional-zoom="10"></div><div class="map-legend"></div>
+        </div>
+        <div class="dist-grid">
+          <div class="dist-cell"><span class="dist-label">→ Jindabyne</span><span class="dist-val">25 min (32 km)</span></div>
+          <div class="dist-cell"><span class="dist-label">→ Thredbo Village</span><span class="dist-val">15 min (18 km)</span></div>
+          <div class="dist-cell"><span class="dist-label">→ Skitube Bullocks</span><span class="dist-val">10 min</span></div>
+          <div class="dist-cell"><span class="dist-label">→ Thredbo River</span><span class="dist-val">Across road</span></div>
+          <div class="dist-cell"><span class="dist-label">Nearest fuel</span><span class="dist-val">Crackenback/Jindabyne</span></div>
+          <div class="dist-cell"><span class="dist-label">Nearest IGA</span><span class="dist-val">Jindabyne</span></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-h">Hikes from the door</div>
+        <table class="hike-table">
+          <thead><tr><th>Hike</th><th>Distance</th><th>Difficulty</th><th>Winter</th></tr></thead>
+          <tbody>
+            <tr><td><div class="hike-name"><a href="https://www.nationalparks.nsw.gov.au/things-to-do/walking-tracks/bullocks-track" target="_blank">Bullocks Track + Bullocks Hut</a></div><div style="font-size:12px;color:#52473a">1934 historic hut, Thredbo–Little Thredbo confluence</div></td><td>5 km return · 1.5 hr</td><td>Easy</td><td><span class="winter-tag snowshoe">Snowshoe</span></td></tr>
+            <tr><td><div class="hike-name"><a href="https://www.trailhiking.com.au/hikes/thredbo-valley-track/" target="_blank">Thredbo Valley Track</a></div><div style="font-size:12px;color:#52473a">Suspension bridges, snow gum woodland — section it</div></td><td>3–16 km · flexible</td><td>Easy-mod</td><td><span class="winter-tag ok">Year-round</span></td></tr>
+            <tr><td><div class="hike-name"><a href="https://www.nationalparks.nsw.gov.au/things-to-do/walking-tracks/pallaibo-walking-track" target="_blank">Pallaibo Walking Track</a></div><div style="font-size:12px;color:#52473a">Sawpit Creek ↔ Thredbo River picnic area</div></td><td>5.6 km one-way</td><td>Easy</td><td><span class="winter-tag ok">Year-round</span></td></tr>
+            <tr><td><div class="hike-name">Dead Horse Gap → Thredbo ridgewalk</div><div style="font-size:12px;color:#52473a">High alpine — exposed</div></td><td>10 km one-way</td><td>Moderate</td><td><span class="winter-tag summer">Summer only</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section">
+        <div class="section-h">Amenities</div>
+        <div class="amenities">
+          <span class="am-chip key">Firewood incl</span><span class="am-chip key">Open fireplace</span><span class="am-chip">Coffee machine</span><span class="am-chip">900mm oven</span><span class="am-chip">Dishwasher</span><span class="am-chip">BBQ</span><span class="am-chip">Well-stocked kitchen</span><span class="am-chip">Pet-friendly</span><span class="am-chip no">No sauna</span><span class="am-chip no">No hot tub</span>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-h">Narrative</div>
+        <div class="narrative">
+          <p>The Cottage is the largest of the Pender Lea chalets — a small cluster on the Alpine Way between Jindabyne and Thredbo. Operator runs several properties. Sleeps 13 cleanly; firewood is included (rare and load-bearing for winter); coffee machine + 900mm oven + dishwasher suggest serious group catering is feasible.</p>
+          <p>Crackenback band (~1200m) — reliable snow through late August. Same elevation as Narragundah but with the bed count Narragundah lacks. Thredbo River across the road for cold-plunge. Alpine Way means drive-in supply is dependable in chains.</p>
+        </div>
+        <div class="verdict second-pick"><strong>Call second after Yarrangobilly.</strong> If NPWS is fully booked, this is the fallback that holds the spirit. Phone <strong>(02) 6456 2088</strong> for winter rate on The Cottage specifically (not the smaller Hilton chalet). Confirm pet policy if anyone's bringing a dog.</div>
+      </div>
+    </div>
+
+    <aside>
+      <div class="crit-card">
+        <h3>Criteria scorecard</h3>
+        <div class="crit-list">
+          <div class="crit-row"><div class="crit-mark hit">✓</div><div class="crit-text"><strong>1 · Snow Aug</strong>~1200m Crackenback band · snow regular through late Aug</div></div>
+          <div class="crit-row"><div class="crit-mark part">~</div><div class="crit-text"><strong>2 · Rustic</strong>Cluster property; not wilderness but isolated Alpine Way stretch</div></div>
+          <div class="crit-row"><div class="crit-mark hit">✓</div><div class="crit-text"><strong>3 · Warm</strong>Open fireplace · firewood included in stay · best heating economics</div></div>
+          <div class="crit-row"><div class="crit-mark hit">✓</div><div class="crit-text"><strong>4 · ≥12</strong>Sleeps 13 cleanly</div></div>
+          <div class="crit-row"><div class="crit-mark hit">✓</div><div class="crit-text"><strong>5 · Hike + drive</strong>Alpine Way trails accessible · supply drive trivial</div></div>
+          <div class="crit-row"><div class="crit-mark hit">✓</div><div class="crit-text"><strong>6 · Low cost</strong>~$50pp/nt at 13 · best value at-capacity on the list</div></div>
+          <div class="crit-row"><div class="crit-mark hit">✓</div><div class="crit-text"><strong>7 · Water</strong>Thredbo River across the road (walk-distance)</div></div>
+        </div>
+        <div class="action-bar">
+          <div class="ab-row"><span>Phone</span><strong>(02) 6456 2088</strong></div>
+          <div class="ab-row"><span>Address</span><strong>1056 Alpine Way</strong></div>
+          <div class="ab-row"><span>Pet policy</span><strong>Pet-friendly</strong></div>
+          <div class="ab-row"><span>Firewood</span><strong>Included</strong></div>
+          <a href="http://www.penderlea.com.au/the-cottage/" target="_blank" class="call-btn">View Pender Lea →</a>
+        </div>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- ====================================================== -->
+<!-- SLIDE 4 — Tom Groggin Station (v5.1 reinstated · remoteness leader) -->
+<!-- ====================================================== -->
+<section class="slide" data-name="Tom Groggin" data-marker="default">
+  <div class="accent-strip"></div>
+  <div class="hero">
+    <div class="gallery" data-images='[]' data-fallback="Tom Groggin Station · 2,000-acre working cattle station · Upper Murray frontage · KNP boundary" data-fallback-link="https://www.tomgrogginstation.com.au/"></div>
+    <div class="title-block">
+      <div>
+        <div class="badge-row"><span class="badge top-pick">★ RANK #2 · score 5.5/7</span><span class="badge">★ Remoteness leader</span><span class="badge">Working cattle station</span><span class="badge eliminate">⚠  Snow at lodge: low</span></div>
+        <h2 class="slide-title">Tom Groggin Station — The Lodge</h2>
+        <div class="slide-loc">Alpine Way, south of Thredbo · 2,000-acre KNP-boundary working station · 5 km Upper Murray frontage · ~540m elev<br><a href="https://www.google.com/maps?q=-36.522721,148.143297" target="_blank">View on Google Maps →</a></div>
+      </div>
+      <div class="scoreboard">
+        <div class="score-num">5.5<span class="denom">/7</span></div>
+        <div class="score-label">Most remote on the shortlist<br>and snow becomes part of the walk</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="stat-label">Sleeps</div><div class="stat-val">8 + cabins</div><div class="stat-sub">Lodge 4 BR / 2 BA · + log cabins for overflow</div></div>
+    <div class="stat"><div class="stat-label">Land</div><div class="stat-val">2,000 ac</div><div class="stat-sub">5 km Upper Murray river frontage</div></div>
+    <div class="stat"><div class="stat-label">Heating</div><div class="stat-val">Fireplace</div><div class="stat-sub">In the lodge · verify cabin heating</div></div>
+    <div class="stat"><div class="stat-label">Rate</div><div class="stat-val">"Competitive"</div><div class="stat-sub">Not published · call</div></div>
+    <div class="stat"><div class="stat-label">Snow</div><div class="stat-val">⚠  Walk-in</div><div class="stat-sub">~540m · snow on the peaks, not lawn</div></div>
+  </div>
+
+  <div class="body-grid">
+    <div>
+      <div class="section">
+        <div class="section-h">Where it is · interactive terrain map</div>
+        <div class="map-block">
+          <div class="map-tabs"><button class="map-tab active" data-mode="terrain">Terrain</button><button class="map-tab" data-mode="satellite">Satellite</button><button class="map-tab" data-mode="regional">Regional context</button></div>
+          <div class="map-container" data-lat="-36.522721" data-lng="148.143297" data-zoom="13" data-regional-zoom="9"></div><div class="map-legend"></div>
+        </div>
+        <div class="dist-grid">
+          <div class="dist-cell"><span class="dist-label">→ Thredbo</span><span class="dist-val">~45 min north</span></div>
+          <div class="dist-cell"><span class="dist-label">→ Khancoban</span><span class="dist-val">~45 min south-west</span></div>
+          <div class="dist-cell"><span class="dist-label">→ Dead Horse Gap (snow line)</span><span class="dist-val">~30 min drive</span></div>
+          <div class="dist-cell"><span class="dist-label">→ Upper Murray (from door)</span><span class="dist-val">5 km frontage</span></div>
+          <div class="dist-cell"><span class="dist-label">Nearest fuel</span><span class="dist-val">Khancoban / Thredbo</span></div>
+          <div class="dist-cell"><span class="dist-label">Nearest IGA</span><span class="dist-val">Khancoban</span></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-h">Hikes from the door</div>
+        <table class="hike-table">
+          <thead><tr><th>Hike</th><th>Distance</th><th>Difficulty</th><th>Winter</th></tr></thead>
+          <tbody>
+            <tr><td><div class="hike-name"><a href="https://www.nationalparks.nsw.gov.au/things-to-do/horse-riding-trails/national-trail-tom-groggin-to-geehi" target="_blank">Bicentennial National Trail — Tom Groggin → Geehi</a></div><div style="font-size:12px;color:#52473a">FROM-DOOR (382m to trail · audit-confirmed) · drops to river flats opposite the station · climbs to snow elevation on the way to Geehi</div></td><td>21 km one-way</td><td>Mod-hard</td><td><span class="winter-tag closed">Closed Jun-Oct</span></td></tr>
+            <tr><td><div class="hike-name">Tom Groggin campground river loops</div><div style="font-size:12px;color:#52473a">From-door · Upper Murray trout pools · operator markets "Crocs on and a little river walking along the knee-deep Swampy Plain"</div></td><td>2-4 km flexible</td><td>Easy</td><td><span class="winter-tag ok">Year-round</span></td></tr>
+            <tr><td><div class="hike-name">2,000-acre station walks</div><div style="font-size:12px;color:#52473a">Working cattle station tracks + paddock walks + ridges — open exploration</div></td><td>Flexible</td><td>Easy-mod</td><td><span class="winter-tag ok">Year-round</span></td></tr>
+            <tr><td><div class="hike-name">Geehi Flats walks (Old Geehi Hut)</div><div style="font-size:12px;color:#52473a">~30 km drive · historic huts · Geehi River flats</div></td><td>3-6 km flexible</td><td>Easy</td><td><span class="winter-tag ok">Year-round</span></td></tr>
+            <tr><td><div class="hike-name">Dead Horse Gap walk-into-snow (drive then hike)</div><div style="font-size:12px;color:#52473a">~30 min drive north to Dead Horse Gap · enters reliable snow zone for the Sat-night ritual</div></td><td>2-10 km flexible</td><td>Mod</td><td><span class="winter-tag snowshoe">Snowshoe</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section">
+        <div class="section-h">Amenities</div>
+        <div class="amenities">
+          <span class="am-chip key">Crackling fireplace</span><span class="am-chip key">Working station vibe</span><span class="am-chip">Modern kitchen</span><span class="am-chip">5 km river frontage</span><span class="am-chip">Property tracks</span><span class="am-chip no">Sauna unconfirmed</span><span class="am-chip no">Wifi unconfirmed</span>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-h">Narrative</div>
+        <div class="narrative">
+          <p>Working cattle station on the Alpine Way, KNP-boundary, with <strong>5 km of Upper Murray River frontage</strong>. The Lodge sleeps 8 (4 BR / 2 BA); log cabins add capacity to fit 12. The most "rustic farm" energy on the shortlist — proper working station, not a holiday-let aesthetic. Bicentennial National Trail starts <strong>382 m from the door</strong> (audit-confirmed) and climbs from the river flats up toward Geehi.</p>
+          <p><strong>Reframing the snow risk.</strong> The lodge sits at ~540 m — snow on the lawn is unreliable. But the surrounding peaks (Mt Pinnibar 1,772 m, the Pilot, the alpine ridge above the Murray gorge) are reliably snow-bound by late August. The 30-min drive north to Dead Horse Gap puts the group in the snow zone, and the Bicentennial Trail climbs from the river flats up through the snow line within an hour's walk. For a "Crossing" retreat about wild-calm tension, <em>walking into the snow</em> may be more potent than waiting for it on the doorstep.</p>
+          <p><strong>Best remoteness on the shortlist.</strong> 2,000 acres of working station, 5 km river frontage, KNP boundary, accessed via Alpine Way from the Thredbo side (this section stays open year-round). No neighbours visible, no resort infrastructure, no cluster of cottages. Just the station and the river.</p>
+        </div>
+        <div class="verdict">Worth a phone call — best in class on remoteness + water + from-door trail access. The "no snow at the lodge" is real but reframes as a walking opportunity rather than a fail. Phone via the operator contact form (no published phone). Verify cabin heating, sauna/hot tub, exact bed split across Lodge + Cabins, and the cancellation policy in case the snow forecast moves.</div>
+      </div>
+    </div>
+
+    <aside>
+      <div class="crit-card">
+        <h3>Criteria scorecard</h3>
+        <div class="crit-list">
+          <div class="crit-row"><div class="crit-mark part">~</div><div class="crit-text"><strong>1 · Snow Aug</strong>~540 m at lodge · snow visible on peaks · 30 min drive to reliable snow zone</div></div>
+          <div class="crit-row"><div class="crit-mark hit">✓</div><div class="crit-text"><strong>2 · Rustic</strong>Working cattle station · KNP boundary · 2,000 acres · highest remoteness on list</div></div>
+          <div class="crit-row"><div class="crit-mark hit">✓</div><div class="crit-text"><strong>3 · Warm</strong>Fireplace in lodge · verify cabin heating on call</div></div>
+          <div class="crit-row"><div class="crit-mark part">~</div><div class="crit-text"><strong>4 · ≥12</strong>Lodge 8 + cabins to reach 12 · fragments group across buildings</div></div>
+          <div class="crit-row"><div class="crit-mark hit">✓</div><div class="crit-text"><strong>5 · Hike + drive</strong>Bicentennial National Trail 382 m from door + 2,000 acres of station tracks + drive-in supply year-round</div></div>
+          <div class="crit-row"><div class="crit-mark hit">✓</div><div class="crit-text"><strong>6 · Low cost</strong>"Highly competitive" station rates per operator · likely lowest on list</div></div>
+          <div class="crit-row"><div class="crit-mark hit">✓</div><div class="crit-text"><strong>7 · Water</strong>5 km Upper Murray frontage · strongest water access on the entire shortlist</div></div>
+        </div>
+        <div class="action-bar">
+          <div class="ab-row"><span>Booking</span><strong>Contact form only</strong></div>
+          <div class="ab-row"><span>Address</span><strong>Alpine Way · south Thredbo</strong></div>
+          <div class="ab-row"><span>Verify</span><strong>Cabin heating + bed split</strong></div>
+          <a href="https://www.tomgrogginstation.com.au/" target="_blank" class="call-btn">View Tom Groggin →</a>
+        </div>
+      </div>
+    </aside>
+  </div>
+</section>
+<!-- ====================================================== -->
+<!-- SLIDE 6 — Reynella Coombe Homestead (v5, softened elev) -->
+<!-- ====================================================== -->
+<section class="slide" data-name="Reynella" data-marker="default">
+  <div class="accent-strip"></div>
+  <div class="hero">
+    <div class="gallery" data-images='["https://lh3.googleusercontent.com/places/ANXAkqH_HOT9prJmH23246Z3c3UaMLToqX1kPlcm-za-BOQW0WE2U3Ax7Mg03qwS_cvByh-dTNhGLv_wB4J94p0C8xZ3xx5wng1R0mI=s4800-w800","https://lh3.googleusercontent.com/places/ANXAkqHoi43MOrVVHgFj_BEIk37ixQlUlpIxXOFfleP7VclqQYvql5T1UmgyikqWvWSY0z4DvVUqf_6uyNDx6EDETjsAa_jB8YZ439U=s4800-w800","https://lh3.googleusercontent.com/places/ANXAkqFdqNSxt8NiJkYKEpoBpBtDnDDEHGr45DBEppWAw820Nl2oaI6YOqBwXRyM3BtvTQd28JlWjTCoN7gBr66_MbqarHvF_Fba6j4=s4800-w550","https://lh3.googleusercontent.com/places/ANXAkqEfB61Dz8v48_jf4BXz0cudUd2OBNpK76B1SBRxRprti3BZCHL569LGccmvpXCO1UjgirTFmQ7AggxSL9NkrWLoc85WMjHkApQ=s4800-w800","https://lh3.googleusercontent.com/places/ANXAkqFfaZByT4XtbFOEkyfuBnrtp2IKecvgq5up92A0wNAfSu3kD-ArXUh2l9yx0uuWX6SMpi0SOpkVXW_cl8yfEqyC3ixspiLg7aY=s4800-w550"]' data-fallback="Reynella Homestead · Working sheep+cattle+horse station · Adaminaby"></div>
+    <div class="title-block">
+      <div>
+        <div class="badge-row"><span class="badge top-pick">★ RANK #3 · score 5.5/7</span><span class="badge">Coombe Homestead · sleeps 14</span><span class="badge">Adaminaby ~1,017m</span><span class="badge">Softened elev floor</span></div>
+        <h2 class="slide-title">Reynella — Coombe Homestead</h2>
+        <div class="slide-loc">699 Kingston Rd, Adaminaby · 6,000-acre working sheep+cattle+horse station · 9 km from Adaminaby town · 40 min Selwyn Snowfields · <strong>~1,017 m</strong> (below original 1,100 m floor — included as softened-criterion option)<br><a href="https://www.google.com/maps?q=-36.006991,148.829432" target="_blank">View on Google Maps →</a></div>
+      </div>
+      <div class="scoreboard">
+        <div class="score-num">5.5<span class="denom">/7</span></div>
+        <div class="score-label">Heritage register + sleeps 14<br>but elevation marginal for snow</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="stat-label">Sleeps</div><div class="stat-val">14</div><div class="stat-sub">10 BR · self-contained</div></div>
+    <div class="stat"><div class="stat-label">Bed config</div><div class="stat-val">K + D + bunks + S</div><div class="stat-sub">"King or double, bunks, singles"</div></div>
+    <div class="stat"><div class="stat-label">Heating</div><div class="stat-val">Stonewall fire</div><div class="stat-sub">+ electric blankets · heaters in every room</div></div>
+    <div class="stat"><div class="stat-label">Rate</div><div class="stat-val">Self-cater<span class="unit"> or DBB</span></div><div class="stat-sub">Coombe = self-contained · Lodge ~$130pp/nt DBB</div></div>
+    <div class="stat"><div class="stat-label">Snow</div><div class="stat-val">⚠ Marginal</div><div class="stat-sub">~1,017 m · falls but not guaranteed on lawn</div></div>
+  </div>
+
+  <div class="body-grid">
+    <div>
+      <div class="section">
+        <div class="section-h">Where it is · interactive terrain map</div>
+        <div class="map-block">
+          <div class="map-tabs"><button class="map-tab active" data-mode="terrain">Terrain</button><button class="map-tab" data-mode="satellite">Satellite</button><button class="map-tab" data-mode="regional">Regional context</button></div>
+          <div class="map-container" data-lat="-36.006991" data-lng="148.829432" data-zoom="12" data-regional-zoom="9"></div><div class="map-legend"></div>
+        </div>
+        <div class="dist-grid">
+          <div class="dist-cell"><span class="dist-label">→ Adaminaby town</span><span class="dist-val">10 min (9 km)</span></div>
+          <div class="dist-cell"><span class="dist-label">→ Mt Selwyn snowfields</span><span class="dist-val">40 min</span></div>
+          <div class="dist-cell"><span class="dist-label">→ Yarrangobilly Caves</span><span class="dist-val">~50 min</span></div>
+          <div class="dist-cell"><span class="dist-label">→ Lake Eucumbene</span><span class="dist-val">10–15 min drive</span></div>
+          <div class="dist-cell"><span class="dist-label">Nearest fuel</span><span class="dist-val">Adaminaby</span></div>
+          <div class="dist-cell"><span class="dist-label">Nearest IGA</span><span class="dist-val">Adaminaby</span></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-h">Hikes from the door</div>
+        <table class="hike-table">
+          <thead><tr><th>Hike</th><th>Distance</th><th>Difficulty</th><th>Winter</th></tr></thead>
+          <tbody>
+            <tr><td><div class="hike-name">6,000-acre station walks (on-property)</div><div style="font-size:12px;color:#52473a">Working farm with paddocks, ridges, mountain stream — operator-described, unmarked tracks</div></td><td>Flexible</td><td>Easy-mod</td><td><span class="winter-tag ok">Year-round</span></td></tr>
+            <tr><td><div class="hike-name">Mt Selwyn cross-country / snowshoe network</div><div style="font-size:12px;color:#52473a">40 min drive · premier NSW learn-to-snowshoe terrain</div></td><td>3-10 km loops</td><td>Easy-mod</td><td><span class="winter-tag snowshoe">Snowshoe gold</span></td></tr>
+            <tr><td><div class="hike-name"><a href="https://www.nationalparks.nsw.gov.au/things-to-do/walking-tracks/yarrangobilly-caves-thermal-pool-walk" target="_blank">Yarrangobilly Thermal Pool Walk</a></div><div style="font-size:12px;color:#52473a">~50 min drive · 27°C natural pool — day-trip viable</div></td><td>1.4 km return</td><td>Mod (steep)</td><td><span class="winter-tag ok">Year-round</span></td></tr>
+            <tr><td><div class="hike-name">Lake Eucumbene foreshore</div><div style="font-size:12px;color:#52473a">10-15 min drive · multiple access points · trout-fishing spots</div></td><td>2-6 km flexible</td><td>Easy</td><td><span class="winter-tag ok">Year-round</span></td></tr>
+            <tr><td><div class="hike-name">Old Kiandra historic district</div><div style="font-size:12px;color:#52473a">~30 min drive · gold-rush heritage walks · NSW snow-history site</div></td><td>2-4 km loops</td><td>Easy</td><td><span class="winter-tag ok">Year-round</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section">
+        <div class="section-h">Amenities</div>
+        <div class="amenities">
+          <span class="am-chip key">Stonewall open fire</span><span class="am-chip key">Sleeps 14 · 1 building</span><span class="am-chip">Electric blankets</span><span class="am-chip">Heaters in every room</span><span class="am-chip">Self-contained kitchen</span><span class="am-chip">All linen + towels</span><span class="am-chip">Games room (lodge)</span><span class="am-chip">Drying room (lodge)</span><span class="am-chip">BYO alcohol</span><span class="am-chip no">No on-site horse riding in winter</span><span class="am-chip no">Min 2 nights winter</span>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-h">Narrative</div>
+        <div class="narrative">
+          <p>42+ year family-run sheep + cattle + horse station, 6,000 acres at the foot of the Snowy Mountains. Coombe Homestead is the larger of two buildings on the property — fully self-contained, sleeps 14 in 10 bedrooms. Used regularly as a winter ski base for Selwyn (40 min away) and as a retreat venue — recent Google reviews mention an art retreat group ("basic but clean and warm accommodation. Food was delicious. Highly recommend.").</p>
+          <p><strong>Best brand register on the shortlist</strong> — working farm, not luxury chalet, not premium homestead. Owners (Roz + John) described in reviews as "always feel like part of the family". 30+ year history of multi-day horse safaris means they know how to host groups doing hard things.</p>
+          <p><strong>Why this entry exists at all</strong> — Adaminaby sits at <strong>~1,017 m</strong>, below the original 1,100 m elevation floor. Snowfalls happen but late-August ground-snow is not guaranteed. Compensating: Mt Selwyn snowshoe network is 40 min north for the snow ritual; the property itself is rustic + warm + heritage-aligned in a way nothing else on the shortlist matches.</p>
+        </div>
+        <div class="verdict">Worth a phone call. If the group can accept "no guarantee of snow on the property, but reliable snow 40 min away", Reynella beats Warreen on register and Snowy Wilderness on capacity-coherence (single building, not multi-cabin). Phone <strong>(02) 6454 2386</strong> direct or <strong>1800 029 909</strong> via the rides operation. Confirm Coombe Homestead availability + minimum-night rule for 28-30 Aug.</div>
+      </div>
+    </div>
+
+    <aside>
+      <div class="crit-card">
+        <h3>Criteria scorecard</h3>
+        <div class="crit-list">
+          <div class="crit-row"><div class="crit-mark part">~</div><div class="crit-text"><strong>1 · Snow Aug</strong>~1,017 m · below original 1,100 m floor (softened) · snowfalls but not guaranteed on lawn</div></div>
+          <div class="crit-row"><div class="crit-mark hit">✓</div><div class="crit-text"><strong>2 · Rustic</strong>42-year working sheep+cattle+horse station · best heritage register on the shortlist</div></div>
+          <div class="crit-row"><div class="crit-mark hit">✓</div><div class="crit-text"><strong>3 · Warm</strong>Stonewall open fireplace + electric blankets + heaters every room</div></div>
+          <div class="crit-row"><div class="crit-mark hit">✓</div><div class="crit-text"><strong>4 · ≥12</strong>Coombe sleeps 14 in single building · no air mattresses needed</div></div>
+          <div class="crit-row"><div class="crit-mark part">~</div><div class="crit-text"><strong>5 · Hike + drive</strong>6,000-acre on-property walks (unmarked) · Mt Selwyn snowshoe 40 min · no marked trail from door</div></div>
+          <div class="crit-row"><div class="crit-mark hit">✓</div><div class="crit-text"><strong>6 · Low cost</strong>Coombe self-contained $130-180pp/nt at 14 · or Lodge $130pp/nt DBB — cheapest on list</div></div>
+          <div class="crit-row"><div class="crit-mark part">~</div><div class="crit-text"><strong>7 · Water</strong>"Crystal clear mountain stream" on property (operator-claimed; walking distance unverified) · Lake Eucumbene 10-15 min drive</div></div>
+        </div>
+        <div class="action-bar">
+          <div class="ab-row"><span>Phone (direct)</span><strong>(02) 6454 2386</strong></div>
+          <div class="ab-row"><span>Phone (booking)</span><strong>1800 029 909</strong></div>
+          <div class="ab-row"><span>Address</span><strong>699 Kingston Rd</strong></div>
+          <div class="ab-row"><span>Min nights (winter)</span><strong>2 nights</strong></div>
+          <div class="ab-row"><span>Google rating</span><strong>5.0 · 10 reviews</strong></div>
+          <a href="http://www.reynellarides.com.au/" target="_blank" class="call-btn">View Reynella Rides →</a>
+        </div>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- ====================================================== -->
+<!-- SLIDE 7 — Banjos Chalet (Dinner Plain VIC, v6 — altitude option) -->
+<!-- ====================================================== -->
+<section class="slide" data-name="Banjos Chalet" data-marker="default">
+  <div class="accent-strip"></div>
+  <div class="hero">
+    <div class="gallery" data-images='[]' data-fallback="Banjos Chalet · Dinner Plain VIC · 1,550m alpine timber village · sleeps 22 · wood fire + spa" data-fallback-link="https://www.alpine-getaways.com/"></div>
+    <div class="title-block">
+      <div>
+        <div class="badge-row"><span class="badge top-pick">★ RANK #5 · score 5.0/7</span><span class="badge">★ Above snow line</span><span class="badge">Dinner Plain VIC · 1,550m</span><span class="badge eliminate">⚠ Phone verify</span></div>
+        <h2 class="slide-title">Banjos Chalet — Dinner Plain (VIC)</h2>
+        <div class="slide-loc">5 Wildflower Bowl, Dinner Plain VIC · 1,550 m alpine timber village · 6-7 hr drive from Sydney · 11 km from Mt Hotham · Great Alpine Road open year-round with chains<br><a href="https://www.google.com/maps?q=-37.018,147.249" target="_blank">View on Google Maps →</a></div>
+      </div>
+      <div class="scoreboard">
+        <div class="score-num">6<span class="denom">/7</span></div>
+        <div class="score-label">Above snow line + road access<br>+ Tom-Groggin-style register</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="stat-label">Sleeps</div><div class="stat-val">22 <span class="unit">max</span></div><div class="stat-sub">7 BR · 3 BA · 2 wings · 3 levels</div></div>
+    <div class="stat"><div class="stat-label">Bed config</div><div class="stat-val">Mix</div><div class="stat-sub">Verify on call · 2 guest wings</div></div>
+    <div class="stat"><div class="stat-label">Heating</div><div class="stat-val">Wood combo</div><div class="stat-sub">"Magnificent fireplace" + combustion wood heater</div></div>
+    <div class="stat"><div class="stat-label">Rate</div><div class="stat-val">~$1.2-1.8k<span class="unit">/nt</span></div><div class="stat-sub">Winter chalet rate · ~$120pp at 12</div></div>
+    <div class="stat"><div class="stat-label">Snow</div><div class="stat-val">✓ Reliable</div><div class="stat-sub">1,550m · snow on lawn guaranteed late Aug</div></div>
+  </div>
+
+  <div class="body-grid">
+    <div>
+      <div class="section">
+        <div class="section-h">Where it is · interactive terrain map</div>
+        <div class="map-block">
+          <div class="map-tabs"><button class="map-tab active" data-mode="terrain">Terrain</button><button class="map-tab" data-mode="satellite">Satellite</button><button class="map-tab" data-mode="regional">Regional context</button></div>
+          <div class="map-container" data-lat="-37.018" data-lng="147.249" data-zoom="14" data-regional-zoom="8"></div><div class="map-legend"></div>
+        </div>
+        <div class="dist-grid">
+          <div class="dist-cell"><span class="dist-label">→ Mt Hotham (ski/services)</span><span class="dist-val">11 km (15 min)</span></div>
+          <div class="dist-cell"><span class="dist-label">→ Omeo (resupply town)</span><span class="dist-val">45 min</span></div>
+          <div class="dist-cell"><span class="dist-label">→ Sydney (drive)</span><span class="dist-val">6-7 hr (~565 km)</span></div>
+          <div class="dist-cell"><span class="dist-label">→ Victoria Falls</span><span class="dist-val">Short walk · creek + falls</span></div>
+          <div class="dist-cell"><span class="dist-label">→ Cobungra River</span><span class="dist-val">~8-10 km drive</span></div>
+          <div class="dist-cell"><span class="dist-label">Road status late Aug</span><span class="dist-val">Open · chains mandatory</span></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-h">Hikes from the door</div>
+        <table class="hike-table">
+          <thead><tr><th>Hike</th><th>Distance</th><th>Difficulty</th><th>Winter</th></tr></thead>
+          <tbody>
+            <tr><td><div class="hike-name">Dinner Plain Hut Walk</div><div style="font-size:12px;color:#52473a">From-door · loops through the village to the historic huts · part of village track network</div></td><td>3-5 km loops</td><td>Easy-mod</td><td><span class="winter-tag snowshoe">Snowshoe</span></td></tr>
+            <tr><td><div class="hike-name">Brabralung Trail</div><div style="font-size:12px;color:#52473a">From-door · cycle + walk trail threading through the village to surrounding bushland</div></td><td>Flexible</td><td>Easy</td><td><span class="winter-tag ok">Year-round</span></td></tr>
+            <tr><td><div class="hike-name">Victoria Falls walk</div><div style="font-size:12px;color:#52473a">Short walk to falls + creek line at the edge of the village — Sat-night plunge candidate</div></td><td>~1-2 km</td><td>Easy</td><td><span class="winter-tag ok">Year-round</span></td></tr>
+            <tr><td><div class="hike-name">Mt Hotham summit / Razorback Walk (drive)</div><div style="font-size:12px;color:#52473a">15 min drive to Mt Hotham + Razorback Ridge — major alpine walks · snowshoe-grade</div></td><td>5-22 km</td><td>Moderate</td><td><span class="winter-tag snowshoe">Snowshoe</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section">
+        <div class="section-h">Amenities</div>
+        <div class="amenities">
+          <span class="am-chip key">Combustion wood heater</span><span class="am-chip key">Magnificent fireplace</span><span class="am-chip key">Large spa (hot tub)</span><span class="am-chip">Self-catering kitchen</span><span class="am-chip">Open-plan living + dining</span><span class="am-chip">Recessed lounge</span><span class="am-chip">Year-round BBQ</span><span class="am-chip">Private secluded position</span><span class="am-chip">Overlooks internal reserve</span><span class="am-chip">Chains required winter</span>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-h">Narrative</div>
+        <div class="narrative">
+          <p>Dinner Plain is a planned alpine village at <strong>1,550 m</strong> with a deliberate timber-shingle architectural code — Tom-Groggin-rustic register at altitude, not Mt Hotham ski-resort polish 11 km up the road. <strong>Great Alpine Road stays open year-round</strong> (chains mandatory Harrietville-Omeo June through end-Sept), so car access for resupply + emergency is real, not Skitube + oversnow like Charlotte Pass. Snow on the lawn is genuinely reliable in late August.</p>
+          <p><strong>Banjos Chalet</strong> at 5 Wildflower Bowl is the alpine-getaways inventory leader for group hire: 7 bedrooms across 2 guest wings and 3 levels, sleeps up to 22 (so 12-14 is comfortable, not stretched). Combustion wood heater + magnificent fireplace + sunken lounge + large spa. Self-catering kitchen + year-round BBQ. Private secluded position overlooking an internal reserve.</p>
+          <p><strong>The plunge ritual:</strong> Victoria Falls creek-line is a short walk from the village; spa on the property for the sauna→plunge cycle. Brabralung Trail + Dinner Plain Hut Walk both thread through the village from the door — you can hike out IN the snow rather than driving to it (the v5.1 Tom Groggin reframe gets to live here without the snow caveat).</p>
+        </div>
+        <div class="verdict"><strong>Phone-verify Banjos availability + exact bed config</strong> for 28-30 Aug 2026 — Alpine Getaways <strong>+61 0408 262 778</strong> / <a href="mailto:simmone@alpine-getaways.com">simmone@alpine-getaways.com</a>. Backup options at the same agency: <strong>Majella</strong> (sleeps 12, 5BR/5BA, fireplace), <strong>Tyee Chalet</strong> (sleeps 14, 4BR/2BA, fireplace), <strong>Alpine Edge</strong> (sleeps 13). The cross-border drive adds 1-2 hours vs NSW Crackenback — that's the trade for genuinely reliable snow on the lawn.</div>
+      </div>
+    </div>
+
+    <aside>
+      <div class="crit-card">
+        <h3>Criteria scorecard</h3>
+        <div class="crit-list">
+          <div class="crit-row"><div class="crit-mark hit">✓</div><div class="crit-text"><strong>1 · Snow Aug</strong>1,550 m · snow on lawn genuinely reliable late Aug · one of only two on shortlist that hits this cleanly</div></div>
+          <div class="crit-row"><div class="crit-mark hit">✓</div><div class="crit-text"><strong>2 · Rustic</strong>Dinner Plain village design code = timber-shingle rustic · NOT ski-resort polish · register matches WC brand</div></div>
+          <div class="crit-row"><div class="crit-mark hit">✓</div><div class="crit-text"><strong>3 · Warm</strong>Combustion wood heater + magnificent open fireplace + large spa</div></div>
+          <div class="crit-row"><div class="crit-mark hit">✓</div><div class="crit-text"><strong>4 · ≥12</strong>Sleeps 22 max in 7BR · 12-14 comfortable · single building 3 levels</div></div>
+          <div class="crit-row"><div class="crit-mark hit">✓</div><div class="crit-text"><strong>5 · Hike + drive</strong>Brabralung Trail + Dinner Plain Hut Walk from the door · Great Alpine Road open with chains for car</div></div>
+          <div class="crit-row"><div class="crit-mark part">~</div><div class="crit-text"><strong>6 · Low cost</strong>$1.2-1.8k/nt = ~$100-150pp at 12 · upper edge of band · check current winter rates</div></div>
+          <div class="crit-row"><div class="crit-mark part">~</div><div class="crit-text"><strong>7 · Water</strong>Victoria Falls + creek walk from village · spa on property for ritual · Cobungra River drive</div></div>
+        </div>
+        <div class="action-bar">
+          <div class="ab-row"><span>Operator</span><strong>Alpine Getaways</strong></div>
+          <div class="ab-row"><span>Phone</span><strong>+61 0408 262 778</strong></div>
+          <div class="ab-row"><span>Email</span><a href="mailto:simmone@alpine-getaways.com">simmone@</a></div>
+          <div class="ab-row"><span>Address</span><strong>5 Wildflower Bowl</strong></div>
+          <div class="ab-row"><span>Drive from Sydney</span><strong>~6-7 hr</strong></div>
+          <a href="https://www.alpine-getaways.com/" target="_blank" class="call-btn">View Alpine Getaways →</a>
+        </div>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- ====================================================== -->
+<!-- SLIDE 8 — COMPARE TABLE + RECOMMENDATION -->
+<!-- ====================================================== -->
+<section class="slide" data-name="Compare + verdict" data-marker="default">
+  <div class="accent-strip"></div>
+  <div class="badge-row" style="margin-bottom:12px"><span class="badge">Slide 6 / 6</span><span class="badge">Compare · score · rank · recommendation</span><span class="badge top-pick">TOP 5 · final scored</span></div>
+  <h2 class="slide-title" style="margin-bottom:6px">The final 5, side by side</h2>
+  <div class="slide-loc" style="margin-bottom:18px">Funnel: 159 candidates → 81 (Stage 1 auto-fail) → 57 (Stage 2 register) → 24 (Stage 3 audit) → <strong>5 (ranked + scored)</strong>. Sorted by final score. Top-row tinted = rank 1.</div>
+
+  <table class="compare-table">
+    <thead>
+      <tr>
+        <th style="width:18%">Property</th>
+        <th style="width:10%">Region · Elev</th>
+        <th style="width:6%">Sleeps</th>
+        <th style="width:6%">Snow</th>
+        <th style="width:6%">Rustic</th>
+        <th style="width:6%">Warm</th>
+        <th style="width:6%">≥12</th>
+        <th style="width:8%">Hike+drive</th>
+        <th style="width:6%">Cost</th>
+        <th style="width:6%">Water</th>
+        <th style="width:6%">Score</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="top-row">
+        <td><div class="prop-name">#1 · Yarrangobilly Caves House — East Wing</div><div class="prop-sub">★ TOP PICK · NPWS heritage 1901 · book BOTH wings for 12-14</div></td>
+        <td>KNP · 1100m</td><td>14 (E) +8 (W)</td>
+        <td class="c-mark part">~</td><td class="c-mark hit">✓</td><td class="c-mark hit">✓</td><td class="c-mark hit">✓</td><td class="c-mark hit">✓</td><td class="c-mark hit">✓</td><td class="c-mark hit">✓</td>
+        <td class="score-cell">6.0</td>
+      </tr>
+      <tr class="top-row">
+        <td><div class="prop-name">#2 · Tom Groggin Station — The Lodge</div><div class="prop-sub">★ remoteness leader · 2,000 ac working station · 5 km Murray · Bicentennial Trail from door</div></td>
+        <td>Alpine Way · 540m</td><td>8 + cabins</td>
+        <td class="c-mark part">~ walk-in</td><td class="c-mark hit">✓</td><td class="c-mark hit">✓</td><td class="c-mark part">~</td><td class="c-mark hit">✓</td><td class="c-mark hit">✓</td><td class="c-mark hit">✓</td>
+        <td class="score-cell">5.5</td>
+      </tr>
+      <tr class="top-row">
+        <td><div class="prop-name">#3 · Reynella — Coombe Homestead</div><div class="prop-sub">42-year working sheep+cattle+horse station · cheapest at-capacity</div></td>
+        <td>Adaminaby · 1017m</td><td>14</td>
+        <td class="c-mark part">~</td><td class="c-mark hit">✓</td><td class="c-mark hit">✓</td><td class="c-mark hit">✓</td><td class="c-mark part">~</td><td class="c-mark hit">✓</td><td class="c-mark part">~</td>
+        <td class="score-cell">5.5</td>
+      </tr>
+      <tr>
+        <td><div class="prop-name">#4 · Pender Lea — The Cottage</div><div class="prop-sub">Crackenback Alpine Way · firewood included · pet-friendly</div></td>
+        <td>Crackenback · 1200m</td><td>13</td>
+        <td class="c-mark hit">✓</td><td class="c-mark part">~</td><td class="c-mark hit">✓</td><td class="c-mark hit">✓</td><td class="c-mark hit">✓</td><td class="c-mark hit">✓</td><td class="c-mark hit">✓</td>
+        <td class="score-cell">5.0</td>
+      </tr>
+      <tr>
+        <td><div class="prop-name">#5 · Banjos Chalet — Dinner Plain (VIC)</div><div class="prop-sub">★ only candidate above snow line + road + capacity + register · sleeps 22 · ⚠ phone-verify</div></td>
+        <td>Dinner Plain · 1,550m</td><td>22</td>
+        <td class="c-mark hit">✓</td><td class="c-mark hit">✓</td><td class="c-mark hit">✓</td><td class="c-mark hit">✓</td><td class="c-mark hit">✓</td><td class="c-mark part">~</td><td class="c-mark part">~</td>
+        <td class="score-cell">5.0</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="recommendation">
+    <h3>Recommended call order — top 5 final</h3>
+    <ol>
+      <li><strong>#1 · Yarrangobilly Caves House — both Heritage Wings.</strong> NPWS group hire · phone <a href="tel:1300072757">1300 072 757</a> or email <a href="mailto:npws.bookings@environment.nsw.gov.au">npws.bookings@environment.nsw.gov.au</a>. Ask explicitly for exclusive both-wing booking 28–30 Aug 2026 (East 14 + West 8 = 22 capacity). The thermal pool + Yarrangobilly River walk is the Sat-night plunge ritual built into the geography. 6 named trails from the door (audit-confirmed). Heritage 1901 building inside KNP. <strong>Booking deadline THIS WEEK — NPWS needs ≥3 months lead.</strong></li>
+      <li><strong>#2 · Tom Groggin Station — The Lodge.</strong> Booking via the operator's <a href="https://www.tomgrogginstation.com.au/" target="_blank">contact form</a>. Most remote on the entire 159-property search: 2,000-acre working cattle station, 5 km Upper Murray river frontage, Bicentennial National Trail starting 382 m from the door (only other audit-confirmed from-door trail besides Yarrangobilly). Lodge sleeps 8 with cabin overflow to 12. Snow caveat: lodge at ~540 m so the lawn won't have snow, but the Bicentennial Trail climbs into snow elevation within an hour's walk — walking INTO the snow as the retreat experience.</li>
+      <li><strong>#3 · Reynella — Coombe Homestead (Adaminaby).</strong> Phone <a href="tel:+61264542386">(02) 6454 2386</a> direct or <strong>1800 029 909</strong> via the rides operation. Best heritage register of the five (42-year working sheep+cattle+horse station) and cheapest at-capacity. Tradeoff: 1,017 m elevation means snow on the lawn is uncertain; rely on Mt Selwyn 40 min north for the snow ritual. Min 2 nights for the homestead in winter. Coombe sleeps 14 in a single building — best capacity coherence after Yarrangobilly.</li>
+      <li><strong>#4 · Pender Lea — The Cottage (1056 Alpine Way).</strong> Phone <a href="tel:+61264562088">(02) 6456 2088</a> for winter rate. The strongest "snow on the lawn" option in NSW at Crackenback 1,200 m, sleeps 13, firewood included, pet-friendly. Family-lodge cluster register is the trade vs Reynella's working-farm rustic — less remote but more reliable on snow.</li>
+      <li><strong>#5 · Banjos Chalet — Dinner Plain (VIC).</strong> Alpine Getaways <strong>+61 0408 262 778</strong> / <a href="mailto:simmone@alpine-getaways.com">simmone@alpine-getaways.com</a>. The only candidate from 159 that hits ALL four hard preferences (snow at 1,550 m + road access with chains + sleeps 22 single building + non-resort timber register). Combustion wood heater + spa. The cross-border drive adds 1–2 hr vs NSW Crackenback — that's the trade. Phone-verify exact bed config + winter rate before placing hold.</li>
+    </ol>
+
+    <h4 style="font-family:var(--serif);font-size:18px;margin:24px 0 10px;color:var(--ink)">The trade-off matrix — pick 3 of 4 in NSW, all 4 in VIC</h4>
+    <table class="compare-table" style="margin-top:6px">
+      <thead><tr><th style="width:30%">Property</th><th style="width:18%">Snow on lawn (≥1,200 m)</th><th style="width:17%">Road access in winter</th><th style="width:17%">Sleeps 12+ single building</th><th style="width:18%">Tom-Groggin register</th></tr></thead>
+      <tbody>
+        <tr class="top-row"><td><div class="prop-name">#1 Yarrangobilly</div><div class="prop-sub">NPWS heritage 1901</div></td><td class="c-mark part">~ (1,100 m)</td><td class="c-mark hit">✓</td><td class="c-mark hit">✓ both wings</td><td class="c-mark hit">✓ 1901 heritage</td></tr>
+        <tr><td><div class="prop-name">#2 Tom Groggin</div><div class="prop-sub">remoteness leader</div></td><td class="c-mark miss">✗ (540 m)</td><td class="c-mark hit">✓</td><td class="c-mark part">~ multi-bldg</td><td class="c-mark hit">✓ working station</td></tr>
+        <tr><td><div class="prop-name">#3 Reynella</div><div class="prop-sub">42-yr working farm</div></td><td class="c-mark part">~ (1,017 m)</td><td class="c-mark hit">✓</td><td class="c-mark hit">✓ Coombe sleeps 14</td><td class="c-mark hit">✓ working farm</td></tr>
+        <tr><td><div class="prop-name">#4 Pender Lea</div><div class="prop-sub">Crackenback Alpine Way</div></td><td class="c-mark hit">✓ (1,200 m)</td><td class="c-mark hit">✓</td><td class="c-mark hit">✓ 13 beds</td><td class="c-mark part">~ chalet cluster</td></tr>
+        <tr><td><div class="prop-name">#5 Banjos (Dinner Plain VIC)</div><div class="prop-sub">★ only all-4 hit</div></td><td class="c-mark hit">✓ (1,550 m)</td><td class="c-mark hit">✓ chains</td><td class="c-mark hit">✓ sleeps 22</td><td class="c-mark part">~ alpine timber</td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top:8px;color:#52473a;font-size:12.5px">The matrix surfaces the real choice. NSW = pick 3 from {snow, road, capacity, register} — no NSW property hits all 4. VIC (Banjos) hits all 4 but adds 1–2 hr to the drive. <strong>Strategy reference:</strong> <a href="https://github.com/cradsdavis-cell/samdavis-trackers/blob/main/wc/crossing/" target="_blank">/wc/crossing/</a> + planning doc <code>~/.claude/plans/dazzling-coalescing-meadow.md</code>. Full CSV: <a href="snowies-200.csv">snowies-200.csv</a> (159 rows). Sortable view: <a href="wc-crossing-csv-view.html">wc-crossing-csv-view.html</a>.</p>
+
+    <h4 style="font-family:var(--serif);font-size:18px;margin:24px 0 10px;color:var(--ink)">Search funnel — 159 → 5</h4>
+    <table class="compare-table" style="margin-top:6px;font-size:13px">
+      <thead><tr><th style="width:18%">Stage</th><th style="width:14%">In</th><th style="width:14%">Out</th><th style="width:54%">Top drop reasons</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Source sweep</strong></td><td>—</td><td>159</td><td>NSW Snowy Mountains broad sweep (~108) + NPWS heritage / specialist agencies / VIC alpine (~51). Pipe-separated CSV at <code>c:/tmp/snowies-200.csv</code>.</td></tr>
+        <tr><td><strong>Stage 1 auto-fail</strong></td><td>159</td><td>81 (−78)</td><td>hotel register (30) · sleeps&lt;8 (21) · day-use only (9) · apartment cluster (6) · KNP north road closed (3) · ski-resort Skitube-only (4) · hostel (2) · school-camp (1) · Cabramurra (1) · TAS (1)</td></tr>
+        <tr><td><strong>Stage 2 register</strong></td><td>81</td><td>57 (−24)</td><td>ski-club register (10) · commercial-scale resort/40+ sleeps (5) · luxury chalet (4) · park or village (not single bldg) (4) · wedding venue (1)</td></tr>
+        <tr><td><strong>Stage 3 audit</strong></td><td>57</td><td>24 (−33)</td><td>sleeps 10-11 without register offset (12) · sleeps&lt;10 strict (8) · low-elev working-farm no named remoteness (7) · low-elev without register offset (5) · marginal-elev without offset (1)</td></tr>
+        <tr class="top-row"><td><strong>Stage 4 rank + score</strong></td><td>24</td><td><strong>5</strong> (−19)</td><td>Scored 24 candidates across 7 criteria; picked top 5 with register-diversity tiebreaks. Bench: Yarrangobilly Guest Rooms (5.75), Yarrangobilly Trickett (5.5), Crackenback Farm (5.0), Creel Lodge (5.0).</td></tr>
+      </tbody>
+    </table>
+
+    <p style="margin-top:14px;color:#52473a;font-size:13px;padding:14px;background:#efe2c4;border-left:4px solid #8a6a1e;border-radius:4px"><strong>⚠ Note on "The Quarters @ Boloco Station":</strong> Sam's preferred Crackenback option per the WC Weekly 2026-05-13 meeting was "The Quarters @ Boloco Station". The search surfaced this property at <strong>Beloka NSW (~1,000 m, not Crackenback 1,200 m)</strong> and the actual booking shape is <strong>Shearers Hut (sleeps 6, 3 BR) + Rose Cottage (separate) = ~12 across 2 buildings</strong>. Lower elevation + fragmented group container vs Pender Lea Cottage's single-building 1,200 m. <strong>Call Sam's WC Weekly preferred to verify the actual location + capacity before discounting Pender Lea</strong> — the data-side recommendation here picks Pender Lea, but Sam's prior preference may overrule it.</p>
+
+    <p style="margin-top:14px;color:#52473a;font-size:13px"><strong>Things to confirm on every call:</strong> exact bed count and bathroom count (not just "sleeps X"); heating system + firewood availability in winter; nearest emergency / phone signal; supply road access in snow (chains required?); cancellation policy if Aug snow forecast fails; whether the property manages other nearby houses for overflow.</p>
+    <p style="margin-top:10px;color:#52473a;font-size:13px"><strong>Hard-fails eliminated through the funnel:</strong> apartments + hostels + commercial hotels (40 properties) · ski-club lodges in Perisher/Smiggin (Skitube-only) · luxury chalets that fail the WC brand register · low-elevation working farms without named remoteness (e.g. Numeralla, Royalla, Stockman's Rest, Beloka, Dalgety) · all KNP-northern-area heritage (Currango cluster, Daffodil, Cooleman, Long Plain — road closed Jun-Oct).</p>
+
+    <p style="margin-top:14px;color:#52473a;font-size:13px;padding:14px;background:#f5d5c5;border-left:4px solid #a64a2c;border-radius:4px"><strong>⚠ Booking deadline this week (per the strategy):</strong> Yarrangobilly NPWS books ≥3 months out — for 28–30 Aug 2026 that's <strong>end-May 2026</strong>. If Yarrangobilly is the top pick, phone <strong>1300 072 757</strong> this week to verify availability and place a hold. Other properties (Pender Lea, Snowy Wilderness, Banjos, Reynella) have 4–6 weeks of slack.</p>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  The Crossing · 28–30 Aug 2026 · WC project lead Sam · TOP 5 deck built 2026-05-25 from 159-row systematic search · 5 finalists ranked + scored · keyboard ← → to navigate · sortable CSV viewer at wc-crossing-csv-view.html
+</footer>
+
+<script>
+  /* ============== SLIDE NAV ============== */
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+  const dotsEl = document.getElementById('dots');
+  const counter = document.getElementById('slideCounter');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  let idx = 0;
+
+  for (let i = 0; i < total; i++) {
+    const marker = slides[i].dataset.marker || 'default';
+    const d = document.createElement('button');
+    d.className = 'dot' + (i === 0 ? ' active' : '') + (marker === 'top' ? ' top-pick' : marker === 'elim' ? ' elim' : '');
+    d.setAttribute('aria-label', 'Slide ' + (i + 1) + ' · ' + (slides[i].dataset.name || ''));
+    d.title = slides[i].dataset.name || '';
+    d.addEventListener('click', () => goTo(i));
+    dotsEl.appendChild(d);
+  }
+
+  function render() {
+    slides.forEach((s, i) => s.classList.toggle('active', i === idx));
+    dotsEl.querySelectorAll('.dot').forEach((d, i) => d.classList.toggle('active', i === idx));
+    counter.textContent = 'Slide ' + (idx + 1) + ' / ' + total + ' · ' + (slides[idx].dataset.name || '');
+    prevBtn.disabled = (idx === 0);
+    nextBtn.disabled = (idx === total - 1);
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  }
+  function goTo(i) {
+    idx = Math.max(0, Math.min(total - 1, i));
+    render();
+  }
+  prevBtn.addEventListener('click', () => goTo(idx - 1));
+  nextBtn.addEventListener('click', () => goTo(idx + 1));
+  document.addEventListener('keydown', (e) => {
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+    if (e.key === 'ArrowLeft') goTo(idx - 1);
+    if (e.key === 'ArrowRight') goTo(idx + 1);
+  });
+
+  /* ============== PHOTO GALLERIES ============== */
+  document.querySelectorAll('.gallery').forEach(gallery => {
+    let images = [];
+    try { images = JSON.parse(gallery.dataset.images || '[]'); } catch(e){ images = []; }
+    const fallbackText = gallery.dataset.fallback || 'Property';
+    const fallbackLink = gallery.dataset.fallbackLink;
+
+    if (!images || images.length === 0) {
+      gallery.innerHTML = `
+        <div class="gallery-fallback">
+          <div class="icon">⛰</div>
+          <div class="name">${fallbackText.split(' · ')[0]}</div>
+          <div class="note">${fallbackText.split(' · ').slice(1).join(' · ') || 'Photos available on official site'}</div>
+          ${fallbackLink ? `<a href="${fallbackLink}" target="_blank" class="link-out">View photos on official site →</a>` : ''}
+        </div>`;
+      return;
+    }
+
+    const wrap = document.createElement('div'); wrap.className = 'gallery-img-wrap';
+    images.forEach((src, i) => {
+      const img = document.createElement('img');
+      img.className = 'gallery-img' + (i === 0 ? ' active' : '');
+      img.src = src; img.alt = fallbackText + ' photo ' + (i+1); img.loading = 'lazy';
+      img.onerror = () => { img.style.display = 'none'; };
+      wrap.appendChild(img);
+    });
+    gallery.appendChild(wrap);
+
+    const count = document.createElement('div'); count.className = 'gallery-count'; count.textContent = '1 / ' + images.length;
+    gallery.appendChild(count);
+
+    if (images.length > 1) {
+      const prev = document.createElement('button'); prev.className = 'gallery-nav prev'; prev.innerHTML = '‹'; prev.setAttribute('aria-label','Previous photo');
+      const next = document.createElement('button'); next.className = 'gallery-nav next'; next.innerHTML = '›'; next.setAttribute('aria-label','Next photo');
+      const dotsBar = document.createElement('div'); dotsBar.className = 'gallery-dots';
+      let curr = 0;
+      const update = () => {
+        wrap.querySelectorAll('.gallery-img').forEach((im,i)=>im.classList.toggle('active', i===curr));
+        dotsBar.querySelectorAll('.gallery-dot').forEach((d,i)=>d.classList.toggle('active', i===curr));
+        count.textContent = (curr+1) + ' / ' + images.length;
+      };
+      images.forEach((_,i) => {
+        const d = document.createElement('button'); d.className = 'gallery-dot' + (i===0?' active':'');
+        d.addEventListener('click', () => { curr = i; update(); });
+        dotsBar.appendChild(d);
+      });
+      prev.addEventListener('click', () => { curr = (curr - 1 + images.length) % images.length; update(); });
+      next.addEventListener('click', () => { curr = (curr + 1) % images.length; update(); });
+      gallery.appendChild(prev); gallery.appendChild(next); gallery.appendChild(dotsBar);
+    }
+  });
+
+  /* ============== LEAFLET MAPS WITH TRAIL OVERLAYS ============== */
+  /* Mapping of property → trail names from the TRAILS dictionary in snowy-trails.js.
+     Trail data sourced from OpenStreetMap (ODbL) via Overpass API on 2026-05-24. */
+  const PROPERTY_TRAILS = {
+    "Yarrangobilly":     ["Thermal Pool Trail","River Walk","Glory Hole Farm","Castle Walk","Self Guided Cave Walk","Jillabenan Cave Walk","South Glory Cave"],
+    "Pender Lea":        ["Bullocks Track","Thredbo Valley Trail","Pallaibo Walking Track","Sawpit Track","Thredbo River Track"],
+    "Snowy Wilderness":  [],
+    "Tom Groggin":       ["Tom Groggin Track","Davies Plain Track","Bicentennial National Trail","Bientennial National Trail"],
+    "Narragundah":       ["Wollondibby Fire Trail","Bullocks Track","Thredbo Valley Trail","Thredbo River Track"],
+    "Reynella":          ["Tantangara Mountain Walk"],
+    "Banjos Chalet":     [],
+    "Compare + verdict": []
+  };
+
+  /* High-contrast palette tuned for terrain tiles (warm earth + bright trail accents) */
+  const TRAIL_COLORS = ['#d35400','#2980b9','#27ae60','#8e44ad','#c0392b','#16a085','#f39c12','#34495e','#e84393'];
+
+  /* TRAIL AUDIT — distances computed by haversine from property coords to nearest OSM polyline point.
+     "FROM DOOR" = nearest point within 500m. "NEAR" = within 1km. "DRIVE" = beyond 1km. */
+  const TRAIL_AUDIT = {
+    "Yarrangobilly": {
+      "Thermal Pool Trail":     {dist: 592,  tier: "near"},
+      "River Walk":             {dist: 496,  tier: "from-door"},
+      "Glory Hole Farm":        {dist: 1035, tier: "drive"},
+      "Castle Walk":            {dist: 443,  tier: "from-door"},
+      "Self Guided Cave Walk":  {dist: 329,  tier: "from-door"},
+      "Jillabenan Cave Walk":   {dist: 452,  tier: "from-door"},
+      "South Glory Cave":       {dist: 320,  tier: "from-door"}
+    },
+    "Pender Lea": {
+      "Bullocks Track":         {dist: 5078, tier: "drive"},
+      "Thredbo Valley Trail":   {dist: 3478, tier: "drive"},
+      "Pallaibo Walking Track": {dist: 10655,tier: "drive"},
+      "Sawpit Track":           {dist: 11568,tier: "drive"},
+      "Thredbo River Track":    {dist: 3478, tier: "drive"}
+    },
+    "Snowy Wilderness": {},
+    "Tom Groggin": {
+      "Tom Groggin Track":           {dist: 2181, tier: "drive"},
+      "Davies Plain Track":          {dist: 3672, tier: "drive"},
+      "Bicentennial National Trail": {dist: 382,  tier: "from-door"},
+      "Bientennial National Trail":  {dist: 548,  tier: "near"}
+    },
+    "Narragundah": {
+      "Wollondibby Fire Trail": {dist: 3141, tier: "drive"},
+      "Bullocks Track":         {dist: 6907, tier: "drive"},
+      "Thredbo Valley Trail":   {dist: 3898, tier: "drive"},
+      "Thredbo River Track":    {dist: 3898, tier: "drive"}
+    },
+    "Reynella": {
+      "Tantangara Mountain Walk": {dist: 22000, tier: "drive"}
+    },
+    "Banjos Chalet": {}
+  };
+
+  /* Per-property summary banner — derived from audit + operator research (2026-05-25) */
+  const PROPERTY_TRAIL_STATUS = {
+    "Yarrangobilly": {
+      status: "strong",
+      headline: "6 trails from the door (within 500m)",
+      detail: "South Glory Cave 320m · Self Guided Cave Walk 329m · Castle Walk 443m · Jillabenan 452m · River Walk 496m · Thermal Pool 592m. Plus Bluff lookout walk (operator-listed, not in OSM)."
+    },
+    "Pender Lea": {
+      status: "mixed",
+      headline: "Operator claims Thredbo Valley Track along Thredbo River frontage (linear, 18km)",
+      detail: "OSM places the trail ~3.5km from the cottage's Alpine Way location — but the property reaches the river. Drive to Bullocks Flat trailhead for direct OSM access (~5km). No on-property marked tracks."
+    },
+    "Snowy Wilderness": {
+      status: "unknown",
+      headline: "Walker access unclear — operator markets HORSE trails, not walking trails",
+      detail: "7,500 acres; 0.3km to KNP boundary but no OSM-tagged trail in that section. Phone +61 2 8935 6449 to verify walker accessibility before booking."
+    },
+    "Tom Groggin": {
+      status: "strong",
+      headline: "1 trail from the door — Bicentennial National Trail starts here (382m)",
+      detail: "Tom Groggin → Geehi section is 21 km one-way and drops to the river flats opposite the station, then climbs to snow elevation. Plus Swampy Plain shallow-water walking + 2,000 acres of station tracks + 5 km Upper Murray frontage. Tom Groggin Track itself is 2.2 km drive. Most remote property on the shortlist."
+    },
+    "Narragundah": {
+      status: "mixed",
+      headline: "100 acres of open snow-gum roaming + Wollondibby Creek through property — no marked tracks",
+      detail: "Listing copy: 'walking around the 100 acre property you're guaranteed to come across kangaroos and deer'. Nearest OSM-tagged trail is 3.1km. Drive ~10min to Bullocks Flat for direct trail access."
+    },
+    "Reynella": {
+      status: "mixed",
+      headline: "6,000-acre working station on-foot · marked trails are all drive-to",
+      detail: "Operator-described unmarked station walking on 6,000 acres + 'crystal clear mountain stream' (walking distance unverified). Nearest OSM-tagged trail is Tantangara Mountain Walk ~22 km drive. Mt Selwyn snowshoe network 40 min drive — best winter walking. Yarrangobilly Thermal Pool 50 min for the plunge ritual."
+    },
+    "Banjos Chalet": {
+      status: "strong",
+      headline: "Brabralung Trail + Dinner Plain Hut Walk thread through the village from the door",
+      detail: "Dinner Plain (VIC) at 1,550 m — the only village above the snow line with year-round car access. Brabralung Trail and Dinner Plain Hut Walk are non-OSM-tagged at this scale but documented in Parks Victoria + village marketing — walks start at the village edge. Victoria Falls creek-line short walk for the Sat-night plunge. Mt Hotham trails 15 min drive for snowshoe-grade alpine. NO NSW OSM trails plotted (different state · trail layer not in our dataset)."
+    },
+    "Compare + verdict": null
+  };
+
+  /* OPERATOR-ADVERTISED on-property trails (claimed by property operator, not OSM-verified).
+     Surface these alongside OSM data so the comparison is honest. */
+  const OPERATOR_TRAILS = {
+    "Yarrangobilly": [
+      {name: "Bluff Lookout Walk", note: "viewpoint over Caves House — operator-listed (not in OSM)", src: "NPWS"}
+    ],
+    "Pender Lea": [
+      {name: "Thredbo River frontage (on-property)", note: "deep pools + running rapids on the property; fishing/walking access from cottage", src: "penderlea.com.au"},
+      {name: "Thredbo Valley Track linear access via property", note: "the 18km riverside multi-use track runs along the river through the property's lower boundary", src: "penderlea.com.au + NPWS"}
+    ],
+    "Snowy Wilderness": [
+      {name: "Horse-riding trails (2 hr to 7-day rides)", note: "wildflower meadows, snow gum forests, ridgelines, mountain streams — walker access not advertised", src: "snowywilderness.com.au"}
+    ],
+    "Narragundah": [
+      {name: "100 acres of open snow-gum bushland", note: "unmarked roaming · kangaroos, deer, echidnas; Wollondibby Creek runs through property", src: "Stayz listing"}
+    ],
+    "Tom Groggin": [
+      {name: "Swampy Plain River shallow-water walking", note: "operator markets 'get your Crocs on and do a little river walking along the knee-deep Swampy Plain'", src: "tomgrogginstation.com.au"},
+      {name: "5 km Upper Murray frontage", note: "riverbank walking + fishing + kayaking on the station's river frontage — strongest water access on shortlist", src: "operator + reviews"},
+      {name: "2,000-acre station tracks", note: "working cattle station paddocks, ridges, dirt access roads — open exploration", src: "tomgrogginstation.com.au"}
+    ],
+    "Reynella": [
+      {name: "6,000-acre working station — sheep + cattle + horse paddocks, ridges, mountain stream", note: "Roz + John have run the property for 42+ years · on-foot exploration of the farm encouraged · NO marked tracks · 'crystal clear mountain stream' on property", src: "reynellarides.com.au + farm-stay.com.au"},
+      {name: "Horse trekking on the property (summer only)", note: "Multi-day Kosciuszko horse safaris in spring/summer/autumn · NO horse riding offered in winter — walking only in Aug", src: "reynellarides.com.au"}
+    ],
+    "Banjos Chalet": [
+      {name: "Dinner Plain Hut Walk", note: "from-door loop through the village past historic huts · part of village track network · Parks Victoria documented", src: "Parks Victoria + visitdinnerplain.com.au"},
+      {name: "Brabralung Trail", note: "walk + cycle trail threading through the village to surrounding bushland — village-edge access", src: "visitdinnerplain.com.au"},
+      {name: "Victoria Falls walk", note: "short walk to falls + creek line at the village edge · Sat-night plunge candidate", src: "Parks Victoria"},
+      {name: "Mt Hotham + Razorback Walk (15 min drive)", note: "major alpine walks · snowshoe-grade in late August · access via Great Alpine Road", src: "Parks Victoria"}
+    ]
+  };
+
+  const mapByContainer = new WeakMap();
+
+  function initMaps() {
+    if (typeof L === 'undefined' || typeof TRAILS === 'undefined') {
+      // Leaflet or trails data not loaded yet — retry
+      setTimeout(initMaps, 100);
+      return;
+    }
+    document.querySelectorAll('.map-container').forEach(container => {
+      const lat = parseFloat(container.dataset.lat);
+      const lng = parseFloat(container.dataset.lng);
+      const localZoom = parseInt(container.dataset.zoom || '14', 10);
+      const regZoom = parseInt(container.dataset.regionalZoom || '10', 10);
+      const slide = container.closest('.slide');
+      const propName = (slide && slide.dataset.name) || '';
+      const trails = PROPERTY_TRAILS[propName] || [];
+
+      /* Base layers */
+      const topo = L.tileLayer('https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png', {
+        attribution: 'Map: © <a href="https://opentopomap.org">OpenTopoMap</a> (CC-BY-SA) · Data: © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        maxZoom: 17, subdomains: 'abc'
+      });
+      const osm = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: 'Map data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors', maxZoom: 19
+      });
+      const sat = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        attribution: 'Imagery © Esri · Data © OSM', maxZoom: 19
+      });
+
+      const map = L.map(container, {
+        center: [lat, lng], zoom: localZoom, layers: [topo],
+        scrollWheelZoom: false, zoomControl: true
+      });
+      // Enable scroll wheel zoom only when map is clicked, to prevent accidental zoom while scrolling page
+      map.on('click focus', () => map.scrollWheelZoom.enable());
+      map.on('mouseout', () => map.scrollWheelZoom.disable());
+
+      /* Property marker */
+      const propIcon = L.divIcon({
+        className: 'prop-marker',
+        html: '<div class="prop-pin"></div>',
+        iconSize: [22, 22], iconAnchor: [11, 22]
+      });
+      L.marker([lat, lng], { icon: propIcon, zIndexOffset: 1000 })
+        .addTo(map)
+        .bindPopup('<strong>' + propName + '</strong><span class="pop-meta">Lat ' + lat.toFixed(4) + ' · Lng ' + lng.toFixed(4) + '</span>');
+
+      /* Trail polylines */
+      const allBounds = L.latLngBounds([[lat, lng], [lat, lng]]);
+      const trailLayers = [];
+
+      trails.forEach((trailName, i) => {
+        const trail = TRAILS[trailName];
+        if (!trail || !trail.segments) return;
+        const color = TRAIL_COLORS[i % TRAIL_COLORS.length];
+        const group = L.featureGroup();
+        trail.segments.forEach(seg => {
+          if (!seg || seg.length < 2) return;
+          const line = L.polyline(seg, {
+            color: color, weight: 4, opacity: 0.92, smoothFactor: 1.5, lineCap: 'round', lineJoin: 'round'
+          });
+          line.bindPopup('<strong>' + trailName + '</strong><span class="pop-meta">' + (trail.type || 'path') + ' · OSM</span>');
+          line.on('mouseover', function(){ this.setStyle({weight: 6, opacity: 1}); });
+          line.on('mouseout', function(){ this.setStyle({weight: 4, opacity: 0.92}); });
+          line.addTo(group);
+          seg.forEach(pt => allBounds.extend(pt));
+        });
+        group.addTo(map);
+        trailLayers.push({name: trailName, color: color, group: group});
+      });
+
+      /* Fit bounds */
+      if (allBounds.isValid() && trails.length > 0) {
+        map.fitBounds(allBounds, { padding: [25, 25], maxZoom: 14 });
+      }
+
+      /* Map tab switching: terrain / satellite / regional */
+      const tabs = slide.querySelectorAll('.map-tab');
+      tabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+          tabs.forEach(t => t.classList.remove('active'));
+          tab.classList.add('active');
+          const mode = tab.dataset.mode;
+          [topo, osm, sat].forEach(l => { if (map.hasLayer(l)) map.removeLayer(l); });
+          if (mode === 'satellite') {
+            map.addLayer(sat);
+            if (allBounds.isValid() && trails.length > 0) map.fitBounds(allBounds, { padding: [25,25], maxZoom: 14 });
+          } else if (mode === 'regional') {
+            map.addLayer(topo);
+            map.setView([lat, lng], regZoom);
+          } else {
+            map.addLayer(topo);
+            if (allBounds.isValid() && trails.length > 0) map.fitBounds(allBounds, { padding: [25,25], maxZoom: 14 });
+            else map.setView([lat, lng], localZoom);
+          }
+        });
+      });
+
+      /* Trail status banner — inserted above the map (inside .map-block, before .map-tabs) */
+      const mapBlock = container.parentElement; // .map-block
+      const statusInfo = PROPERTY_TRAIL_STATUS[propName];
+      if (statusInfo && mapBlock) {
+        const existingBanner = mapBlock.querySelector('.trail-status-banner');
+        if (!existingBanner) {
+          const banner = document.createElement('div');
+          banner.className = 'trail-status-banner status-' + statusInfo.status;
+          const icon = statusInfo.status === 'strong' ? '✓' : statusInfo.status === 'mixed' ? '◐' : statusInfo.status === 'drive' ? '✗' : '?';
+          banner.innerHTML = '<span class="ts-icon">' + icon + '</span><span><strong>' + statusInfo.headline + '</strong><br><span class="ts-detail">' + statusInfo.detail + '</span></span>';
+          mapBlock.insertBefore(banner, mapBlock.firstChild);
+        }
+      }
+
+      /* Legend rendering — with distance + from-door tier badge */
+      const legend = container.nextElementSibling;
+      if (legend && legend.classList.contains('map-legend')) {
+        const audit = TRAIL_AUDIT[propName] || {};
+        let html = '<span class="legend-prop">' + propName + '</span>';
+        if (trails.length > 0) {
+          trails.forEach((tn, i) => {
+            if (TRAILS[tn]) {
+              const color = TRAIL_COLORS[i % TRAIL_COLORS.length];
+              const displayName = tn.replace(/^Bientennial /, 'Bicentennial ');
+              const auditInfo = audit[tn];
+              let distStr = '';
+              let pillStr = '';
+              if (auditInfo) {
+                const distLabel = auditInfo.dist < 1000 ? auditInfo.dist + 'm' : (auditInfo.dist / 1000).toFixed(1) + 'km';
+                distStr = '<span class="legend-dist">· ' + distLabel + '</span>';
+                if (auditInfo.tier === 'from-door') pillStr = '<span class="from-door-pill">from door</span>';
+                else if (auditInfo.tier === 'near') pillStr = '<span class="from-door-pill near">near</span>';
+                else if (auditInfo.tier === 'drive') pillStr = '<span class="from-door-pill drive">drive</span>';
+              }
+              html += '<span class="legend-item"><span class="legend-swatch" style="background:' + color + '"></span>' + displayName + distStr + pillStr + '</span>';
+            }
+          });
+        } else {
+          html += '<span class="legend-note">No OSM-tagged trails within map view · see operator-claimed trails below</span>';
+        }
+        legend.innerHTML = html;
+      }
+
+      /* Operator-advertised on-property trails block — appended after the legend */
+      const opTrails = OPERATOR_TRAILS[propName];
+      if (opTrails && opTrails.length > 0 && legend && !legend.parentElement.querySelector('.operator-trails')) {
+        const opBlock = document.createElement('div');
+        opBlock.className = 'operator-trails';
+        let opHtml = '<h4>Operator-advertised on-property walks (not OSM-verified)</h4><ul>';
+        opTrails.forEach(t => {
+          opHtml += '<li><strong>' + t.name + '</strong> — <span class="op-claim">' + t.note + '</span></li>';
+        });
+        opHtml += '</ul><div class="op-source">Sources: ' + opTrails.map(t => t.src).filter((v,i,a) => a.indexOf(v) === i).join(' · ') + '</div>';
+        opBlock.innerHTML = opHtml;
+        legend.parentElement.insertBefore(opBlock, legend.nextSibling);
+      }
+
+      mapByContainer.set(container, map);
+    });
+  }
+
+  /* Leaflet maps need invalidateSize() when their container becomes visible (slide switch) */
+  function refreshActiveSlideMaps() {
+    const activeSlide = document.querySelector('.slide.active');
+    if (!activeSlide) return;
+    activeSlide.querySelectorAll('.map-container').forEach(c => {
+      const map = mapByContainer.get(c);
+      if (map) {
+        setTimeout(() => map.invalidateSize(), 60);
+      }
+    });
+  }
+
+  /* Hook slide navigation to refresh visible map sizing */
+  const origRender = render;
+  render = function() {
+    origRender();
+    refreshActiveSlideMaps();
+  };
+
+  /* Boot */
+  if (window.L && window.TRAILS) {
+    initMaps();
+    refreshActiveSlideMaps();
+  } else {
+    window.addEventListener('load', () => {
+      initMaps();
+      refreshActiveSlideMaps();
+    });
+  }
+
+  render();
+</script>
+
+</body>
+</html>
+

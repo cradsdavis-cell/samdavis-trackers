@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>WC Crossing · Full 159-property search · sortable view</title>
+<style>
+  :root{
+    --ink:#0f1419; --paper:#f4f0e8; --paper-soft:#ebe5d8; --paper-warm:#f7f2e6;
+    --line:#cdc4b0; --line-soft:#dcd3bf;
+    --accent:#0E5484; --warm:#a64a2c; --moss:#3d5a3c; --gold:#8a6a1e;
+    --hit:#3d5a3c; --miss:#a64a2c; --part:#8a6a1e;
+    --mono:'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    --serif: 'Playfair Display', Georgia, 'Times New Roman', serif;
+    --sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--paper);color:var(--ink);font-family:var(--sans);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased}
+  header{padding:24px 32px;border-bottom:1px solid var(--line);background:var(--paper-soft);position:sticky;top:0;z-index:50;backdrop-filter:blur(10px);background:rgba(244,240,232,.94)}
+  h1{font-family:var(--serif);font-size:28px;font-weight:600;letter-spacing:-.02em;margin-bottom:6px}
+  h1 .em{color:var(--warm)}
+  .sub{font-family:var(--mono);font-size:11.5px;color:#5a5340;letter-spacing:.04em;text-transform:uppercase}
+  .filters{margin-top:14px;padding-top:12px;border-top:1px dashed var(--line-soft);display:flex;flex-wrap:wrap;gap:10px;font-family:var(--mono);font-size:11px}
+  .filter-input,.filter-select{padding:6px 10px;border:1px solid var(--line);border-radius:3px;background:var(--paper);font-family:var(--mono);font-size:11px;color:var(--ink)}
+  .filter-input{width:240px}
+  .counter{margin-left:auto;color:#675a45;align-self:center}
+  .pill-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+  .pill{padding:3px 8px;border-radius:999px;font-family:var(--mono);font-size:10px;letter-spacing:.04em;border:1px solid var(--line);cursor:pointer;background:var(--paper);color:#675a45}
+  .pill.active{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+  .pill.r1.active{background:var(--moss);border-color:var(--moss)}
+  .pill.r2.active{background:var(--gold);border-color:var(--gold)}
+  .pill.r3.active{background:var(--warm);border-color:var(--warm)}
+  table{width:100%;border-collapse:collapse;font-size:12.5px;background:var(--paper);margin-top:0}
+  th{position:sticky;top:120px;background:var(--paper-soft);font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:#675a45;font-weight:600;padding:10px 8px;border-bottom:2px solid var(--ink);text-align:left;cursor:pointer;user-select:none;white-space:nowrap}
+  th:hover{background:var(--paper-warm)}
+  th.sorted-asc::after{content:' ▲';color:var(--accent)}
+  th.sorted-desc::after{content:' ▼';color:var(--accent)}
+  td{padding:8px;border-bottom:1px solid var(--line-soft);vertical-align:top}
+  tr:nth-child(even) td{background:var(--paper-soft)}
+  tr.rank-1 td{background:rgba(61,90,60,.15)!important;font-weight:500}
+  tr.rank-2 td,tr.rank-3 td,tr.rank-4 td,tr.rank-5 td{background:rgba(138,106,30,.10)!important}
+  tr.failed td{opacity:.55}
+  td.name{font-family:var(--serif);font-weight:600;font-size:13.5px;color:var(--ink);max-width:260px}
+  td.name .rank-badge{font-family:var(--mono);font-size:9px;background:var(--moss);color:var(--paper);padding:2px 5px;border-radius:2px;margin-right:6px;letter-spacing:.04em;font-weight:600}
+  td.name .rank-badge.r2{background:var(--gold)}
+  td.name .rank-badge.r3{background:var(--gold)}
+  td.name .rank-badge.r4{background:var(--accent)}
+  td.name .rank-badge.r5{background:var(--accent)}
+  td .url{font-family:var(--mono);font-size:10px;color:var(--accent);text-decoration:none;border-bottom:1px dashed var(--line)}
+  td .url:hover{color:var(--warm)}
+  td.yn-y{color:var(--hit);font-weight:600;font-family:var(--mono)}
+  td.yn-n{color:var(--miss);font-family:var(--mono);font-size:10.5px}
+  td.score{font-family:var(--serif);font-weight:600;font-size:15px;color:var(--ink);text-align:center}
+  td.rank{font-family:var(--mono);font-size:12px;font-weight:600;text-align:center;color:var(--ink)}
+  .reg-pill{padding:1px 6px;border-radius:2px;font-family:var(--mono);font-size:9.5px;font-weight:600;display:inline-block}
+  .reg-working-farm{background:#d5e0c9;color:#3d5a3c}
+  .reg-heritage{background:#d6e4ed;color:#0e5484}
+  .reg-alpine-hut{background:#e0d6c2;color:#5a4a2a}
+  .reg-family-lodge{background:#ebe5d8;color:#675a45}
+  .reg-boutique-chalet{background:#e8d9c8;color:#7a5a3a}
+  .reg-luxury-chalet{background:#f5d5c5;color:#7a3a22}
+  .reg-ski-club{background:#dcd0e4;color:#5a4a7a}
+  .reg-hotel{background:#dde1d6;color:#525a4a}
+  .reg-hostel{background:#dcd3bf;color:#52473a}
+  .reg-school-camp{background:#e6c8bc;color:#7a3a22}
+  .reg-wedding-venue{background:#f5d5c5;color:#7a3a22}
+  .reg-apartment{background:#dcd3bf;color:#52473a}
+  footer{padding:18px 32px;border-top:1px solid var(--line);font-family:var(--mono);font-size:10.5px;color:#9a8d75;letter-spacing:.04em;text-transform:uppercase;background:var(--paper-soft)}
+  footer a{color:#675a45;border-bottom:1px solid currentColor;text-decoration:none}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>The Crossing · <span class="em">CSV viewer</span></h1>
+    <div class="sub">159 candidates · funnel 159 → 81 → 57 → 24 → 5 · click column headers to sort · filter by name, region, register, or pass-stage</div>
+  </div>
+  <div class="filters">
+    <input class="filter-input" id="searchInput" type="text" placeholder="Filter by name or town…">
+    <select class="filter-select" id="stateFilter">
+      <option value="">All states</option>
+      <option value="NSW">NSW</option>
+      <option value="VIC">VIC</option>
+      <option value="ACT">ACT</option>
+      <option value="TAS">TAS</option>
+    </select>
+    <select class="filter-select" id="passFilter">
+      <option value="">All stages</option>
+      <option value="rank">Top 5 (final ranked)</option>
+      <option value="stage3">Stage 3 survivors (24)</option>
+      <option value="stage2">Stage 2 survivors (57)</option>
+      <option value="stage1">Stage 1 survivors (81)</option>
+      <option value="failed">Failed (any stage)</option>
+    </select>
+    <span class="counter" id="counter">159 rows</span>
+  </div>
+  <div class="pill-row" id="registerPills"></div>
+</header>
+
+<table id="t">
+  <thead>
+    <tr>
+      <th data-key="rank">Rank</th>
+      <th data-key="score">Score</th>
+      <th data-key="name">Property</th>
+      <th data-key="town">Town</th>
+      <th data-key="state">State</th>
+      <th data-key="elevation_m" data-num="1">Elev</th>
+      <th data-key="sleeps_max" data-num="1">Sleeps</th>
+      <th data-key="bedrooms" data-num="1">BR</th>
+      <th data-key="rate_range_aud_per_nt">Rate</th>
+      <th data-key="heating">Heating</th>
+      <th data-key="register_guess">Register</th>
+      <th data-key="source_platform">Source</th>
+      <th data-key="refine1_pass">S1</th>
+      <th data-key="refine2_pass">S2</th>
+      <th data-key="refine3_pass">S3</th>
+    </tr>
+  </thead>
+  <tbody id="tbody"></tbody>
+</table>
+
+<footer>
+  WC Crossing · 28–30 Aug 2026 · CSV source <a href="snowies-200.csv">snowies-200.csv</a> · top 5 deck <a href="./">/wc/crossing/</a> · strategy doc ~/.claude/plans/dazzling-coalescing-meadow.md
+</footer>
+
+<script>
+fetch('snowies-200.csv').then(r => r.text()).then(csv => {
+  const lines = csv.trim().split(/\r?\n/);
+  const headers = lines[0].split('|');
+  const rows = lines.slice(1).map(l => {
+    const f = l.split('|');
+    const o = {};
+    headers.forEach((h, i) => o[h] = f[i] || '');
+    return o;
+  });
+
+  const tbody = document.getElementById('tbody');
+  const counter = document.getElementById('counter');
+  const pillsEl = document.getElementById('registerPills');
+
+  let sortKey = 'rank';
+  let sortAsc = true;
+  let filter = { search: '', state: '', pass: '', register: '' };
+
+  // Build register pills
+  const registers = [...new Set(rows.map(r => r.register_guess))].filter(x => x).sort();
+  registers.forEach(reg => {
+    const pill = document.createElement('button');
+    pill.className = 'pill reg-' + reg;
+    pill.textContent = reg + ' (' + rows.filter(r => r.register_guess === reg).length + ')';
+    pill.dataset.reg = reg;
+    pill.addEventListener('click', () => {
+      filter.register = filter.register === reg ? '' : reg;
+      [...pillsEl.children].forEach(p => p.classList.toggle('active', p.dataset.reg === filter.register));
+      render();
+    });
+    pillsEl.appendChild(pill);
+  });
+
+  function render() {
+    let data = rows.filter(r => {
+      if (filter.search && !(r.name.toLowerCase().includes(filter.search.toLowerCase()) || r.town.toLowerCase().includes(filter.search.toLowerCase()))) return false;
+      if (filter.state && r.state !== filter.state) return false;
+      if (filter.register && r.register_guess !== filter.register) return false;
+      if (filter.pass === 'rank' && !r.rank) return false;
+      if (filter.pass === 'stage3' && r.refine3_pass !== 'Y') return false;
+      if (filter.pass === 'stage2' && r.refine2_pass !== 'Y') return false;
+      if (filter.pass === 'stage1' && r.refine1_pass !== 'Y') return false;
+      if (filter.pass === 'failed' && r.refine1_pass === 'Y' && r.refine2_pass === 'Y' && r.refine3_pass === 'Y') return false;
+      return true;
+    });
+
+    data.sort((a, b) => {
+      let va = a[sortKey] || '';
+      let vb = b[sortKey] || '';
+      // Numeric coercion for numeric columns
+      if (['rank','score','elevation_m','sleeps_max','bedrooms'].indexOf(sortKey) >= 0 || sortKey === 'final_score') {
+        const na = parseFloat(va); const nb = parseFloat(vb);
+        if (!isNaN(na) && !isNaN(nb)) return sortAsc ? na - nb : nb - na;
+        if (!isNaN(na)) return sortAsc ? -1 : 1;
+        if (!isNaN(nb)) return sortAsc ? 1 : -1;
+      }
+      return sortAsc ? String(va).localeCompare(String(vb)) : String(vb).localeCompare(String(va));
+    });
+
+    tbody.innerHTML = '';
+    for (const r of data) {
+      const tr = document.createElement('tr');
+      const isFailed = !(r.refine1_pass === 'Y' && r.refine2_pass === 'Y' && r.refine3_pass === 'Y');
+      if (isFailed) tr.className = 'failed';
+      if (r.rank) tr.className = 'rank-' + r.rank;
+
+      const rankBadge = r.rank ? '<span class="rank-badge r' + r.rank + '">#' + r.rank + '</span>' : '';
+      const url = r.listing_url && r.listing_url !== 'verify' ? '<a href="' + r.listing_url + '" target="_blank" class="url">listing →</a>' : '<span class="url" style="opacity:.4">verify</span>';
+      tr.innerHTML =
+        '<td class="rank">' + (r.rank || '') + '</td>' +
+        '<td class="score">' + (r.final_score || '') + '</td>' +
+        '<td class="name">' + rankBadge + r.name + '<br>' + url + '</td>' +
+        '<td>' + r.town + '</td>' +
+        '<td>' + r.state + '</td>' +
+        '<td>' + r.elevation_m + '</td>' +
+        '<td>' + r.sleeps_max + '</td>' +
+        '<td>' + r.bedrooms + '</td>' +
+        '<td>' + r.rate_range_aud_per_nt + '</td>' +
+        '<td>' + r.heating + '</td>' +
+        '<td><span class="reg-pill reg-' + r.register_guess + '">' + r.register_guess + '</span></td>' +
+        '<td>' + r.source_platform + '</td>' +
+        '<td class="' + (r.refine1_pass === 'Y' ? 'yn-y' : 'yn-n') + '">' + (r.refine1_pass === 'Y' ? '✓' : (r.final_score && r.final_score.length > 0 ? '·' : r.final_score)) + '</td>' +
+        '<td class="' + (r.refine2_pass === 'Y' ? 'yn-y' : 'yn-n') + '">' + (r.refine2_pass === 'Y' ? '✓' : '') + '</td>' +
+        '<td class="' + (r.refine3_pass === 'Y' ? 'yn-y' : 'yn-n') + '">' + (r.refine3_pass === 'Y' ? '✓' : '') + '</td>';
+      tbody.appendChild(tr);
+    }
+    counter.textContent = data.length + ' / ' + rows.length + ' rows';
+
+    document.querySelectorAll('th').forEach(th => {
+      th.classList.remove('sorted-asc', 'sorted-desc');
+      if (th.dataset.key === sortKey) th.classList.add(sortAsc ? 'sorted-asc' : 'sorted-desc');
+    });
+  }
+
+  // Sort handlers
+  document.querySelectorAll('th').forEach(th => {
+    th.addEventListener('click', () => {
+      const key = th.dataset.key;
+      if (sortKey === key) sortAsc = !sortAsc;
+      else { sortKey = key; sortAsc = true; }
+      render();
+    });
+  });
+
+  // Filter handlers
+  document.getElementById('searchInput').addEventListener('input', e => { filter.search = e.target.value; render(); });
+  document.getElementById('stateFilter').addEventListener('change', e => { filter.state = e.target.value; render(); });
+  document.getElementById('passFilter').addEventListener('change', e => { filter.pass = e.target.value; render(); });
+
+  render();
+}).catch(err => {
+  document.getElementById('tbody').innerHTML = '<tr><td colspan="15" style="padding:40px;text-align:center;color:#a64a2c">Could not load snowies-200.csv: ' + err.message + '</td></tr>';
+});
+</script>
+</body>
+</html>
